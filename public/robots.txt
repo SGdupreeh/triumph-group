@@ -1,0 +1,29 @@
+User-agent: *
+Allow: /
+
+# Specifically allow AI and Search Bots to crawl the site
+User-agent: Googlebot
+Allow: /
+User-agent: Bingbot
+Allow: /
+User-agent: YandexBot
+Allow: /
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: Anthropic-ai
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: CCBot
+Allow: /
+User-agent: FacebookBot
+Allow: /
+
+# Sitemaps can be defined here later when deployed
+# Sitemap: https://triumphgroup.cc/sitemap.xml
