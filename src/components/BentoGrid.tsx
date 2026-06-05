@@ -46,7 +46,7 @@ const copy = {
     ceoRole: 'Strategy · Architecture · Scale',
     ceoDesc: 'Holds the vision. Controls the architecture. Makes decisions that cannot be unmade.',
     ceoCta: 'Start Integration →',
-    ceoEmail: 'hq@triumphgroup.cc',
+    ceoEmail: 'ceo@triumphgroup.cc',
   },
   ru: {
     eyebrow: '// юниты',
@@ -85,7 +85,7 @@ const copy = {
     ceoRole: 'Стратегия · Архитектура · Масштаб',
     ceoDesc: 'Держит видение. Контролирует архитектуру. Принимает решения, которые нельзя отменить.',
     ceoCta: 'Начать интеграцию →',
-    ceoEmail: 'hq@triumphgroup.cc',
+    ceoEmail: 'ceo@triumphgroup.cc',
   },
 }
 

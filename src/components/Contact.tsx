@@ -10,13 +10,13 @@ const copy = {
     eyebrow: '// contact',
     title: 'Ready to\nDominate?',
     sub: 'We choose who we work with.',
-    email: 'hq@triumphgroup.cc',
+    email: 'ceo@triumphgroup.cc',
   },
   ru: {
     eyebrow: '// контакт',
     title: 'Готовы\nДоминировать?',
     sub: 'Мы выбираем, с кем работаем.',
-    email: 'hq@triumphgroup.cc',
+    email: 'ceo@triumphgroup.cc',
   },
 }
 
