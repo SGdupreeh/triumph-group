@@ -3,6 +3,173 @@ import { motion, useInView, useScroll, useSpring, AnimatePresence } from 'framer
 
 const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
 
+type Lang = 'en' | 'ru'
+
+const i18n = {
+  en: {
+    heroTag: 'triumph group · architecture concept · confidential',
+    titleLine1: 'Synthetic',
+    titleLine2: 'sales architecture',
+    heroDesc: 'This is not a commercial proposal. This is a transformation project — from the visual core to an autonomous client acquisition system that works without your involvement.',
+    stat1: '−67', stat1Suf: '%', stat1Label: 'average lead cost reduction',
+    stat2: '<3', stat2Suf: ' s', stat2Label: 'AI agent response speed',
+    stat3: '2', stat3Suf: '', stat3Label: 'clients per quarter — our limit',
+    
+    probTag: 'problem deconstruction',
+    probTitle1: 'While others',
+    probTitle2: 'calculate estimates —',
+    probTitle3: 'you lose the market',
+    probDesc1: 'Classic digital agencies scale your expenses. They sell you the work of a 50-person staff: account managers, copywriters, junior designers.',
+    probDesc2: 'You pay their payroll, sick leave, and office coffee. ',
+    probStrong: 'We offer a different paradigm.',
+    
+    compOldTitle: 'Classic agency',
+    compOldItems: ['Payroll for 50+ staff', 'Launch takes months', 'Working by specs, not by results', 'Shoots cost millions of rubles'],
+    compNewTitle: 'Triumph Group',
+    compNewItems: ['AI infrastructure instead of people', 'Launch in 2–4 weeks', 'KPI: conversion and lead speed', 'Endless content without shoots'],
+    
+    unitsTag: 'ecosystem demonstration',
+    unitsTitle1: 'Three units.',
+    unitsTitle2: 'One ecosystem.',
+    unitReplaces: 'Replaces: ',
+    units: [
+      { icon: '◈', tag: 'Visual Engine', name: 'Triumph Labs', replaces: 'On-site shoots for millions', desc: 'We generate an endless stream of premium AI content. Product renders, motion videos, brand visuals — without film crews or studios.' },
+      { icon: '⬡', tag: 'Digital Face', name: 'Triumph Codes', replaces: 'Agency brochure websites', desc: 'WebGL interfaces that sell through aesthetics. Your site becomes a product. 90+ Lighthouse score. Apple.com level speed.' },
+      { icon: '⬢', tag: 'Automation', name: 'Triumph Systems', replaces: 'Half of the sales department', desc: 'n8n flows intercept leads from Instagram and WhatsApp, qualify them via AI, and deliver only those ready to pay right now.' },
+    ],
+
+    roadmapTag: 'roadmap',
+    roadmapTitle1: 'Clear sprints.',
+    roadmapTitle2: 'No abstractions.',
+    roadmapDesc: 'Every stage is a specific, measurable result. From day one: fixed deadlines, KPIs, and accountability for every step.',
+    timeline: [
+      { week: 'Week 1 — 2', title: 'Core Deployment', tasks: ['Audit of current digital infrastructure', 'Server environment setup (Docker, VPS)', 'WebGL interface + design system build', 'Generation of first AI content pool (20–30 renders)'] },
+      { week: 'Week 3 — 4', title: 'Integration and Automation', tasks: ['n8n connection to CRM (AmoCRM / Bitrix24)', 'AI agents for WhatsApp and Instagram', 'Real-time lead qualification system', 'First conversion metrics'] },
+      { week: 'Week 5 — 6', title: 'Final Debugging', tasks: ['QA: load testing', 'Handover of accesses and documentation', 'Live mode launch', 'Board call: results and SLA contract'] },
+      { week: 'Month 2+', title: 'SLA — Continuous Support', tasks: ['Servers and bots on our side', 'Monthly retainer: upgrades and reports', 'Priority access to new AI tools'] },
+    ],
+
+    priceTag: 'pricing',
+    priceTitle1: 'We sell',
+    priceTitle2: 'business nodes, not hours',
+    priceDesc: 'Three entry architectures. Choose your scale.',
+    pricing: [
+      {
+        tier: 'Tier I', name: '«Visual Injection»',
+        tagline: 'For those who want aesthetics without code changes.',
+        price: 'from $1,500', priceNote: 'one-time payment · Labs only',
+        items: ['Repackaging socials into a unified visual language', 'Generation of 20–30 AI product renders', 'Content system for 3 months', 'Technical specs for scaling'],
+      },
+      {
+        tier: 'Tier II', name: '«Autonomous Contour»',
+        tagline: 'Complete turnkey digital infrastructure rebuild.',
+        price: 'from $5,000', priceNote: 'one-time + $500/mo · Labs + Codes + Systems',
+        items: ['New WebGL site from scratch', 'n8n webhooks to your CRM', '24/7 AI agents (WhatsApp + Instagram)', 'Product knowledge base for agents', 'Starting content pool of 50+ renders', 'SLA: servers and bots on our side'],
+        highlight: true, badge: 'Recommended',
+      },
+      {
+        tier: 'Tier III', name: '«Singularity»',
+        tagline: 'Exclusive partnership. Without your competitors.',
+        price: 'from $10,000', priceNote: 'one-time + % of conversion · Full Stack + Exclusive',
+        items: ['Everything from "Autonomous Contour"', 'Custom AI agents for each manager', 'Exclusive: no competitors in your city for 12 mos.', 'Quarterly strategy sessions with founder', '% of conversion growth per contract'],
+      },
+    ],
+
+    ctaTag: 'closing',
+    ctaTitle1: 'This quarter',
+    ctaTitle2: 'we only take 2 companies',
+    ctaDesc: 'Deploying such architecture requires 100% focus from our engineers. This concept and reserved capacities are held for you for 48 hours.',
+    timeLeft: 'time left',
+    timeH: 'h', timeM: 'm', timeS: 's',
+    btnIdle: 'Schedule an intro Board call',
+    btnSent: 'Request sent. We will contact you within 1 hour.',
+    disclaimer: 'By clicking the button, you confirm your interest in partnership. No spam — just the first strategic conversation.',
+    footerText: '© 2026 Triumph Group · Confidential concept · Not for distribution',
+    lang: 'EN',
+  },
+  ru: {
+    heroTag: 'triumph group · концепт архитектуры · конфиденциально',
+    titleLine1: 'Синтетическая',
+    titleLine2: 'архитектура продаж',
+    heroDesc: 'Это не коммерческое предложение. Это проект трансформации — от визуального ядра до автономной системы захвата клиентов, которая работает без вашего участия.',
+    stat1: '−67', stat1Suf: '%', stat1Label: 'среднее снижение стоимости лида',
+    stat2: '<3', stat2Suf: ' сек', stat2Label: 'скорость ответа AI-агента',
+    stat3: '2', stat3Suf: '', stat3Label: 'клиентов в квартал — наш лимит',
+    
+    probTag: 'деконструкция проблемы',
+    probTitle1: 'Пока другие',
+    probTitle2: 'считают смету —',
+    probTitle3: 'вы теряете рынок',
+    probDesc1: 'Классические digital-агентства масштабируют ваши расходы. Они продают вам работу штата из 50 человек: аккаунт-менеджеров, копирайтеров, младших дизайнеров.',
+    probDesc2: 'Вы оплачиваете их ФОТ, больничные и кофе в офисе. ',
+    probStrong: 'Мы предлагаем другую парадигму.',
+    
+    compOldTitle: 'Классическое агентство',
+    compOldItems: ['ФОТ 50+ человек в штате', 'Запуск — месяцами', 'Работа по ТЗ, не по результату', 'Выездные съёмки за млн ₽'],
+    compNewTitle: 'Triumph Group',
+    compNewItems: ['AI-инфраструктура вместо людей', 'Запуск за 2–4 недели', 'KPI: конверсия и скорость лида', 'Бесконечный контент без съёмок'],
+    
+    unitsTag: 'демонстрация экосистемы',
+    unitsTitle1: 'Три юнита.',
+    unitsTitle2: 'Одна экосистема.',
+    unitReplaces: 'Заменяет: ',
+    units: [
+      { icon: '◈', tag: 'Визуальный движок', name: 'Triumph Labs', replaces: 'Выездные съёмки за млн ₽', desc: 'Генерируем бесконечный поток премиум AI-контента. Рендеры продукта, motion-видео, brand-visual — без съёмочных групп и павильонов.' },
+      { icon: '⬡', tag: 'Цифровое лицо', name: 'Triumph Codes', replaces: 'Агентские сайты-буклеты', desc: 'WebGL-интерфейсы, которые продают через эстетику. Ваш сайт становится продуктом. 90+ Lighthouse. Скорость — как у Apple.com.' },
+      { icon: '⬢', tag: 'Автоматизация', name: 'Triumph Systems', replaces: 'Половину отдела продаж', desc: 'n8n-связки перехватывают лидов из Instagram и WhatsApp, квалифицируют через AI и отдают только тех, кто готов платить прямо сейчас.' },
+    ],
+
+    roadmapTag: 'дорожная карта',
+    roadmapTitle1: 'Чёткие спринты.',
+    roadmapTitle2: 'Никаких абстракций.',
+    roadmapDesc: 'Каждый этап — конкретный измеримый результат. С первого дня: фиксированные дедлайны, KPI и ответственность за каждый шаг.',
+    timeline: [
+      { week: 'Неделя 1 — 2', title: 'Развёртывание ядра', tasks: ['Аудит текущей digital-инфраструктуры', 'Настройка серверного окружения (Docker, VPS)', 'Сборка WebGL-интерфейса + дизайн-система', 'Генерация первого пула AI-контента (20–30 рендеров)'] },
+      { week: 'Неделя 3 — 4', title: 'Интеграция и автоматизация', tasks: ['Подключение n8n к CRM (AmoCRM / Bitrix24)', 'AI-агенты для WhatsApp и Instagram', 'Система квалификации лидов в реальном времени', 'Первые метрики конверсии'] },
+      { week: 'Неделя 5 — 6', title: 'Финальная отладка', tasks: ['QA: нагрузочное тестирование', 'Передача доступов и документации', 'Запуск боевого режима', 'Board-звонок: итоги и SLA-договор'] },
+      { week: 'Месяц 2+', title: 'SLA — непрерывная поддержка', tasks: ['Серверы и боты на нашей стороне', 'Ежемесячный retainer: апгрейды и отчёты', 'Приоритетный доступ к новым AI-инструментам'] },
+    ],
+
+    priceTag: 'ценообразование',
+    priceTitle1: 'Мы продаём',
+    priceTitle2: 'бизнес-узлы, не часы',
+    priceDesc: 'Три архитектуры входа. Выберите масштаб.',
+    pricing: [
+      {
+        tier: 'Тариф I', name: '«Визуальная инъекция»',
+        tagline: 'Для тех, кто хочет эстетику без изменений в коде.',
+        price: 'от 150 000 ₽', priceNote: 'разовый платёж · только Labs',
+        items: ['Переупаковка соцсетей в единый визуальный язык', 'Генерация 20–30 AI-рендеров продукта', 'Система контента на 3 месяца', 'Техзадание для масштабирования'],
+      },
+      {
+        tier: 'Тариф II', name: '«Автономный контур»',
+        tagline: 'Полная пересборка digital-инфраструктуры под ключ.',
+        price: 'от 500 000 ₽', priceNote: 'разовый + 50 000 ₽/мес · Labs + Codes + Systems',
+        items: ['Новый WebGL-сайт с нуля', 'n8n-вебхуки в вашу CRM', 'AI-агенты 24/7 (WhatsApp + Instagram)', 'База знаний продукта для агентов', 'Стартовый пул контента 50+ рендеров', 'SLA: серверы и боты на нашей стороне'],
+        highlight: true, badge: 'Рекомендуемый',
+      },
+      {
+        tier: 'Тариф III', name: '«Сингулярность»',
+        tagline: 'Эксклюзивное партнёрство. Без ваших конкурентов.',
+        price: 'от 1 000 000 ₽', priceNote: 'разовый + % от конверсии · полный стек + эксклюзив',
+        items: ['Всё из «Автономного контура»', 'Кастомные AI-агенты под каждого менеджера', 'Эксклюзив: без конкурентов в вашем городе 12 мес.', 'Ежеквартальные стратсессии с фаундером', '% от роста конверсии по договору'],
+      },
+    ],
+
+    ctaTag: 'закрытие',
+    ctaTitle1: 'В текущем квартале',
+    ctaTitle2: 'мы берём только 2 компании',
+    ctaDesc: 'Развёртывание подобной архитектуры требует 100% фокуса наших инженеров. Данный концепт и зарезервированные мощности удерживаются за вами в течение 48 часов.',
+    timeLeft: 'осталось',
+    timeH: 'ч', timeM: 'м', timeS: 'с',
+    btnIdle: 'Назначить установочный Board-звонок',
+    btnSent: 'Запрос отправлен. Свяжемся в течение 1 часа.',
+    disclaimer: 'Нажимая кнопку, вы подтверждаете интерес к партнёрству. Никакого спама — только первый стратегический разговор.',
+    footerText: '© 2026 Triumph Group · Конфиденциальный концепт · Не для распространения',
+    lang: 'RU',
+  }
+}
+
 /* ─────────────────────────────────────────────────────────────────────
    ATOMS
 ───────────────────────────────────────────────────────────────────── */
@@ -174,7 +341,7 @@ function TimelineStep({ week, title, tasks, index, last }: { week: string; title
 /* ─────────────────────────────────────────────────────────────────────
    UNIT CARD
 ───────────────────────────────────────────────────────────────────── */
-function UnitCard({ icon, tag, name, replaces, desc, delay }: { icon: string; tag: string; name: string; replaces: string; desc: string; delay: number }) {
+function UnitCard({ icon, tag, name, replaces, desc, delay, replacesLabel }: { icon: string; tag: string; name: string; replaces: string; desc: string; delay: number; replacesLabel: string }) {
   const [hov, setHov] = useState(false)
   return (
     <FadeUp delay={delay}>
@@ -190,7 +357,7 @@ function UnitCard({ icon, tag, name, replaces, desc, delay }: { icon: string; ta
         </div>
         <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '17px', color: 'rgba(255,255,255,0.88)', marginBottom: '6px', letterSpacing: '-0.01em' }}>{name}</h3>
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.18)', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-          Заменяет: {replaces}
+          {replacesLabel} {replaces}
         </p>
         <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)', lineHeight: 1.75 }}>{desc}</p>
       </div>
@@ -198,12 +365,11 @@ function UnitCard({ icon, tag, name, replaces, desc, delay }: { icon: string; ta
   )
 }
 
-
-
 /* ═══════════════════════════════════════════════════════════════════════
    MAIN
 ═══════════════════════════════════════════════════════════════════════ */
 export default function ProposalPage() {
+  const [lang, setLang] = useState<Lang>('ru')
   const [secs, setSecs] = useState(48 * 3600)
   const [sent, setSent] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
@@ -226,43 +392,28 @@ export default function ProposalPage() {
   const mm = String(Math.floor((secs % 3600) / 60)).padStart(2, '0')
   const ss = String(secs % 60).padStart(2, '0')
 
-  const units = [
-    { icon: '◈', tag: 'Визуальный движок', name: 'Triumph Labs', replaces: 'Выездные съёмки за млн ₽', desc: 'Генерируем бесконечный поток премиум AI-контента. Рендеры продукта, motion-видео, brand-visual — без съёмочных групп и павильонов.' },
-    { icon: '⬡', tag: 'Цифровое лицо', name: 'Triumph Codes', replaces: 'Агентские сайты-буклеты', desc: 'WebGL-интерфейсы, которые продают через эстетику. Ваш сайт становится продуктом. 90+ Lighthouse. Скорость — как у Apple.com.' },
-    { icon: '⬢', tag: 'Автоматизация', name: 'Triumph Systems', replaces: 'Половину отдела продаж', desc: 'n8n-связки перехватывают лидов из Instagram и WhatsApp, квалифицируют через AI и отдают только тех, кто готов платить прямо сейчас.' },
-  ]
-
-  const timeline = [
-    { week: 'Неделя 1 — 2', title: 'Развёртывание ядра', tasks: ['Аудит текущей digital-инфраструктуры', 'Настройка серверного окружения (Docker, VPS)', 'Сборка WebGL-интерфейса + дизайн-система', 'Генерация первого пула AI-контента (20–30 рендеров)'] },
-    { week: 'Неделя 3 — 4', title: 'Интеграция и автоматизация', tasks: ['Подключение n8n к CRM (AmoCRM / Bitrix24)', 'AI-агенты для WhatsApp и Instagram', 'Система квалификации лидов в реальном времени', 'Первые метрики конверсии'] },
-    { week: 'Неделя 5 — 6', title: 'Финальная отладка', tasks: ['QA: нагрузочное тестирование', 'Передача доступов и документации', 'Запуск боевого режима', 'Board-звонок: итоги и SLA-договор'] },
-    { week: 'Месяц 2+', title: 'SLA — непрерывная поддержка', tasks: ['Серверы и боты на нашей стороне', 'Ежемесячный retainer: апгрейды и отчёты', 'Приоритетный доступ к новым AI-инструментам'] },
-  ]
-
-  const pricing = [
-    {
-      tier: 'Тариф I', name: '«Визуальная инъекция»',
-      tagline: 'Для тех, кто хочет эстетику без изменений в коде.',
-      price: 'от 150 000 ₽', priceNote: 'разовый платёж · только Labs',
-      items: ['Переупаковка соцсетей в единый визуальный язык', 'Генерация 20–30 AI-рендеров продукта', 'Система контента на 3 месяца', 'Техзадание для масштабирования'],
-    },
-    {
-      tier: 'Тариф II', name: '«Автономный контур»',
-      tagline: 'Полная пересборка digital-инфраструктуры под ключ.',
-      price: 'от 500 000 ₽', priceNote: 'разовый + 50 000 ₽/мес · Labs + Codes + Systems',
-      items: ['Новый WebGL-сайт с нуля', 'n8n-вебхуки в вашу CRM', 'AI-агенты 24/7 (WhatsApp + Instagram)', 'База знаний продукта для агентов', 'Стартовый пул контента 50+ рендеров', 'SLA: серверы и боты на нашей стороне'],
-      highlight: true, badge: 'Рекомендуемый',
-    },
-    {
-      tier: 'Тариф III', name: '«Сингулярность»',
-      tagline: 'Эксклюзивное партнёрство. Без ваших конкурентов.',
-      price: 'от 1 000 000 ₽', priceNote: 'разовый + % от конверсии · полный стек + эксклюзив',
-      items: ['Всё из «Автономного контура»', 'Кастомные AI-агенты под каждого менеджера', 'Эксклюзив: без конкурентов в вашем городе 12 мес.', 'Ежеквартальные стратсессии с фаундером', '% от роста конверсии по договору'],
-    },
-  ]
+  const t = i18n[lang]
 
   return (
     <div style={{ background: '#080809', color: '#e4e4e7', fontFamily: 'var(--font-body)', minHeight: '100vh', overflowX: 'hidden' }}>
+
+      {/* Lang Switcher (Fixed Top Right) */}
+      <div style={{ position: 'fixed', top: '24px', right: '32px', zIndex: 10000, display: 'flex', alignItems: 'center', gap: '2px', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
+        {(['en', 'ru'] as Lang[]).map((l) => (
+          <button
+            key={l}
+            onClick={() => setLang(l)}
+            style={{
+              padding: '6px 10px', borderRadius: '4px', border: 'none', cursor: 'pointer',
+              background: lang === l ? 'rgba(255,255,255,0.08)' : 'transparent',
+              color: lang === l ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.3)',
+              transition: 'all 150ms', textTransform: 'uppercase',
+            }}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
 
       {/* Cursor glow */}
       <div aria-hidden style={{
@@ -295,15 +446,15 @@ export default function ProposalPage() {
         </div>
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '920px' }}>
-          <motion.p
+          <motion.p key={lang + 'tag'}
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.15 }}
             style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.16)', marginBottom: '36px', display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
             <span style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.15)', display: 'inline-block' }} />
-            triumph group · концепт архитектуры · конфиденциально
+            {t.heroTag}
             <span style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.15)', display: 'inline-block' }} />
           </motion.p>
 
-          <motion.div
+          <motion.div key={lang + 'tit'}
             initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.3 }}>
             <h1 style={{
               fontFamily: 'var(--font-display)', fontWeight: 700,
@@ -311,24 +462,24 @@ export default function ProposalPage() {
               background: 'linear-gradient(160deg, #ffffff 0%, rgba(255,255,255,0.4) 100%)',
               WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>
-              Синтетическая<br />архитектура продаж
+              {t.titleLine1}<br />{t.titleLine2}
             </h1>
           </motion.div>
 
-          <motion.p
+          <motion.p key={lang + 'desc'}
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
             style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(161,161,170,0.65)', lineHeight: 1.8, maxWidth: '580px', margin: '0 auto 56px' }}>
-            Это не коммерческое предложение. Это проект трансформации — от визуального ядра до автономной системы захвата клиентов, которая работает без вашего участия.
+            {t.heroDesc}
           </motion.p>
 
           {/* Stats */}
-          <motion.div
+          <motion.div key={lang + 'stats'}
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.7 }}
             style={{ display: 'flex', gap: '48px', justifyContent: 'center', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '44px' }}>
             {[
-              { val: '−67', suf: '%', label: 'среднее снижение стоимости лида' },
-              { val: '<3', suf: ' сек', label: 'скорость ответа AI-агента' },
-              { val: '2', suf: '', label: 'клиентов в квартал — наш лимит' },
+              { val: t.stat1, suf: t.stat1Suf, label: t.stat1Label },
+              { val: t.stat2, suf: t.stat2Suf, label: t.stat2Label },
+              { val: t.stat3, suf: t.stat3Suf, label: t.stat3Label },
             ].map(({ val, suf, label }, i) => (
               <div key={i} style={{ textAlign: 'center' }}>
                 <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '-0.025em', color: 'rgba(255,255,255,0.85)' }}>
@@ -354,28 +505,28 @@ export default function ProposalPage() {
 
       {/* ══ ПРОБЛЕМА ══════════════════════════════════════════════════════ */}
       <section style={{ padding: '110px 24px', maxWidth: '1100px', margin: '0 auto' }}>
-        <FadeUp><Tag>деконструкция проблемы</Tag></FadeUp>
+        <FadeUp><Tag>{t.probTag}</Tag></FadeUp>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '64px', alignItems: 'start' }}>
           <FadeUp delay={0.1}>
-            <Headline>Пока другие<br />считают смету —<br />вы теряете рынок</Headline>
+            <Headline>{t.probTitle1}<br />{t.probTitle2}<br />{t.probTitle3}</Headline>
           </FadeUp>
 
           <FadeUp delay={0.2}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <p style={{ fontSize: '15px', color: 'rgba(161,161,170,0.75)', lineHeight: 1.85 }}>
-                Классические digital-агентства масштабируют ваши расходы. Они продают вам работу штата из 50 человек: аккаунт-менеджеров, копирайтеров, младших дизайнеров.
+                {t.probDesc1}
               </p>
               <p style={{ fontSize: '15px', color: 'rgba(161,161,170,0.75)', lineHeight: 1.85 }}>
-                Вы оплачиваете их ФОТ, больничные и кофе в офисе.{' '}
-                <span style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>Мы предлагаем другую парадигму.</span>
+                {t.probDesc2}
+                <span style={{ color: 'rgba(255,255,255,0.75)', fontWeight: 500 }}>{t.probStrong}</span>
               </p>
 
               {/* Compare table */}
               <div style={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden', marginTop: '8px' }}>
                 {[
-                  { label: 'Классическое агентство', ok: false, items: ['ФОТ 50+ человек в штате', 'Запуск — месяцами', 'Работа по ТЗ, не по результату', 'Выездные съёмки за млн ₽'] },
-                  { label: 'Triumph Group', ok: true, items: ['AI-инфраструктура вместо людей', 'Запуск за 2–4 недели', 'KPI: конверсия и скорость лида', 'Бесконечный контент без съёмок'] },
+                  { label: t.compOldTitle, ok: false, items: t.compOldItems },
+                  { label: t.compNewTitle, ok: true, items: t.compNewItems },
                 ].map(({ label, ok, items }) => (
                   <div key={label} style={{ padding: '20px 22px', background: ok ? 'rgba(255,255,255,0.015)' : 'transparent', borderBottom: ok ? 'none' : '1px solid rgba(255,255,255,0.04)' }}>
                     <p style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: ok ? 'rgba(120,240,150,0.5)' : 'rgba(240,100,100,0.4)', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '10px' }}>
@@ -402,13 +553,13 @@ export default function ProposalPage() {
       <section style={{ padding: '110px 24px', maxWidth: '1100px', margin: '0 auto' }}>
         <FadeUp>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <Tag>демонстрация экосистемы</Tag>
-            <Headline>Три юнита.<br />Одна экосистема.</Headline>
+            <Tag>{t.unitsTag}</Tag>
+            <Headline>{t.unitsTitle1}<br />{t.unitsTitle2}</Headline>
           </div>
         </FadeUp>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
-          {units.map((u, i) => <UnitCard key={u.name} {...u} delay={i * 0.1} />)}
+          {t.units.map((u, i) => <UnitCard key={u.name} {...u} delay={i * 0.1} replacesLabel={t.unitReplaces} />)}
         </div>
       </section>
 
@@ -418,15 +569,15 @@ export default function ProposalPage() {
       <section style={{ padding: '110px 24px', maxWidth: '1100px', margin: '0 auto' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '64px' }}>
           <FadeUp>
-            <Tag>дорожная карта</Tag>
-            <Headline size="sm">Чёткие спринты.<br />Никаких абстракций.</Headline>
+            <Tag>{t.roadmapTag}</Tag>
+            <Headline size="sm">{t.roadmapTitle1}<br />{t.roadmapTitle2}</Headline>
             <p style={{ fontSize: '14px', color: 'rgba(161,161,170,0.55)', lineHeight: 1.8, marginTop: '20px' }}>
-              Каждый этап — конкретный измеримый результат. С первого дня: фиксированные дедлайны, KPI и ответственность за каждый шаг.
+              {t.roadmapDesc}
             </p>
           </FadeUp>
           <div>
-            {timeline.map((step, i) => (
-              <TimelineStep key={i} {...step} index={i} last={i === timeline.length - 1} />
+            {t.timeline.map((step, i) => (
+              <TimelineStep key={i} {...step} index={i} last={i === t.timeline.length - 1} />
             ))}
           </div>
         </div>
@@ -438,14 +589,14 @@ export default function ProposalPage() {
       <section style={{ padding: '110px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <FadeUp>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <Tag>ценообразование</Tag>
-            <Headline>Мы продаём<br />бизнес-узлы, не часы</Headline>
-            <p style={{ fontSize: '14px', color: 'rgba(161,161,170,0.45)', maxWidth: '400px', margin: '16px auto 0', lineHeight: 1.7 }}>Три архитектуры входа. Выберите масштаб.</p>
+            <Tag>{t.priceTag}</Tag>
+            <Headline>{t.priceTitle1}<br />{t.priceTitle2}</Headline>
+            <p style={{ fontSize: '14px', color: 'rgba(161,161,170,0.45)', maxWidth: '400px', margin: '16px auto 0', lineHeight: 1.7 }}>{t.priceDesc}</p>
           </div>
         </FadeUp>
 
         <div style={{ display: 'flex', gap: '14px', alignItems: 'stretch', flexWrap: 'wrap' }}>
-          {pricing.map((p, i) => <PricingCard key={p.tier} {...p} delay={i * 0.1} />)}
+          {t.pricing.map((p, i) => <PricingCard key={p.tier} {...p} delay={i * 0.1} />)}
         </div>
       </section>
 
@@ -455,23 +606,23 @@ export default function ProposalPage() {
       <section style={{ padding: '130px 24px 160px', maxWidth: '860px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
         <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '500px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.015) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none' }} />
 
-        <FadeUp><Tag>закрытие</Tag></FadeUp>
+        <FadeUp><Tag>{t.ctaTag}</Tag></FadeUp>
 
         <FadeUp delay={0.1}>
-          <Headline size="lg">В текущем квартале<br />мы берём только 2 компании</Headline>
+          <Headline size="lg">{t.ctaTitle1}<br />{t.ctaTitle2}</Headline>
         </FadeUp>
 
         <FadeUp delay={0.2}>
           <p style={{ fontSize: '15px', color: 'rgba(161,161,170,0.6)', lineHeight: 1.85, margin: '28px auto 44px', maxWidth: '560px' }}>
-            Развёртывание подобной архитектуры требует 100% фокуса наших инженеров. Данный концепт и зарезервированные мощности удерживаются за вами в течение 48 часов.
+            {t.ctaDesc}
           </p>
         </FadeUp>
 
         {/* Countdown */}
         <FadeUp delay={0.3}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.018)', padding: '18px 28px', marginBottom: '44px' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.18)', textTransform: 'uppercase', letterSpacing: '0.15em', marginRight: '16px' }}>осталось</span>
-            {[[hh, 'ч'], [mm, 'м'], [ss, 'с']].map(([v, l], i) => (
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.18)', textTransform: 'uppercase', letterSpacing: '0.15em', marginRight: '16px' }}>{t.timeLeft}</span>
+            {[[hh, t.timeH], [mm, t.timeM], [ss, t.timeS]].map(([v, l], i) => (
               <div key={l} style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginRight: i < 2 ? '10px' : 0 }}>
                 <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '30px', color: 'rgba(255,255,255,0.82)', letterSpacing: '-0.02em', lineHeight: 1 }}>{v}</span>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.18)' }}>{l}</span>
@@ -504,7 +655,7 @@ export default function ProposalPage() {
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 20px 60px rgba(255,255,255,0.07)',
                   transition: 'box-shadow 300ms',
                 }}>
-                Назначить установочный Board-звонок
+                {t.btnIdle}
                 <span style={{ fontSize: '20px', lineHeight: 1 }}>→</span>
               </motion.button>
             ) : (
@@ -517,7 +668,7 @@ export default function ProposalPage() {
                   fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 500,
                   color: 'rgba(120,240,150,0.8)',
                 }}>
-                <span>✓</span> Запрос отправлен. Свяжемся в течение 1 часа.
+                <span>✓</span> {t.btnSent}
               </motion.div>
             )}
           </AnimatePresence>
@@ -525,7 +676,7 @@ export default function ProposalPage() {
 
         <FadeUp delay={0.55}>
           <p style={{ marginTop: '28px', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.12)', letterSpacing: '0.08em', lineHeight: 1.9 }}>
-            Нажимая кнопку, вы подтверждаете интерес к партнёрству.<br />Никакого спама — только первый стратегический разговор.
+            {t.disclaimer}
           </p>
         </FadeUp>
       </section>
@@ -534,7 +685,7 @@ export default function ProposalPage() {
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase' }}>TRIUMPH</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.12)' }}>
-          © {new Date().getFullYear()} Triumph Group · Конфиденциальный концепт · Не для распространения
+          {t.footerText}
         </span>
         <a href="https://triumphgroup.cc" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.18)', textDecoration: 'none' }}>triumphgroup.cc</a>
       </footer>
