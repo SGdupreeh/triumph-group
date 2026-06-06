@@ -139,35 +139,11 @@ function PricingCard({ tier, name, subtitle, price, items, outcome, highlight, b
   )
 }
 
-
-/* ─────────────────────────────────────────────────────────────────────
-   UNIT CARD
-───────────────────────────────────────────────────────────────────── */
-function UnitCard({ icon, tag, name, desc, delay }: { icon: string; tag: string; name: string; desc: string; delay: number }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <FadeUp delay={delay}>
-      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
-        borderRadius: '16px', padding: '28px',
-        border: hov ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.055)',
-        background: hov ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.012)',
-        transition: 'all 350ms', cursor: 'default',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px' }}>
-          <span style={{ fontSize: '26px', lineHeight: 1 }}>{icon}</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.18)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{tag}</span>
-        </div>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '17px', color: 'rgba(255,255,255,0.88)', marginBottom: '14px', letterSpacing: '-0.01em' }}>{name}</h3>
-        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)', lineHeight: 1.75 }}>{desc}</p>
-      </div>
-    </FadeUp>
-  )
-}
-
 /* ═══════════════════════════════════════════════════════════════════════
    MAIN
 ═══════════════════════════════════════════════════════════════════════ */
-export default function ProposalB2CPage() {  const [sent, setSent] = useState(false)
+export default function ProposalB2CPage() {
+  const [sent, setSent] = useState(false)
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
   const { scrollYProgress } = useScroll()
@@ -179,35 +155,28 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
     return () => window.removeEventListener('mousemove', handle)
   }, [])
 
-
-  const units = [
-    { icon: '◈', tag: 'LABS', name: 'Бесконечный продакшен', desc: 'Генерируем тебе бесконечный пул фото и видео для Reels/Shorts без студий и камер. Ты просто даешь нам свое лицо (исходники), мы делаем из тебя икону.' },
-    { icon: '⬡', tag: 'CODES', name: 'WebGL Link-in-bio', desc: 'Собираем личный WebGL-сайт. Никаких унылых Taplink. Только черный матовый фон, плавные 3D-анимации и твой статус.' },
-    { icon: '⬢', tag: 'SYSTEMS', name: 'ИИ-Клон в Telegram', desc: 'Ставим ИИ-бота в твой личный Telegram. Пока ты спишь, бот общается с твоими подписчиками или рекламодателями твоим голосом и стилем речи.' },
-  ]
-
   const pricing = [
     {
-      tier: 'Тариф I', name: '«Цифровой Аватар»',
-      subtitle: 'Быстрые деньги',
-      price: '15 000 ₽',
-      items: ['5 фотографий клиента', 'Полная визуальная переупаковка соцсетей', '10 гиперреалистичных ИИ-артов (стритвир, киберпанк, бизнес)', 'Обложки + аватарки'],
-      outcome: 'Продается за 10 минут переписки. Три таких чека — и ты забираешь существенную часть суммы на MacBook.'
+      tier: 'Тариф I', name: '«Контент-Конвейер»',
+      subtitle: 'Только LABS',
+      price: '20 000 ₽ / мес',
+      items: ['Разработка жесткого визуального гайдлайна (Dark Tech / Minimal)', 'Пакетная генерация и монтаж сетки контента для соцсетей', 'ИИ-обработка и моушн-дизайн'],
+      outcome: 'Замена личного продакшена.'
     },
     {
-      tier: 'Тариф II', name: '«Личная Сингулярность»',
-      subtitle: 'Ключевой таргет',
+      tier: 'Тариф II', name: '«Цифровой Монолит»',
+      subtitle: 'Твой главный фокус · LABS + CODES',
       price: '50 000 ₽',
-      items: ['Пакет контента (Labs)', 'Сборка премиального личного микро-сайта (Codes)'],
-      outcome: 'Обрати внимание на цифру. Один закрытый клиент на этот тариф = мгновенная оплата аренды вашего хаба. Сегодня вечером закрыл криптана на сайт-визитку, завтра забрал ключи от квартиры.',
+      items: ['Разработка WebGL-визитки (никаких конструкторов, только код, черный фон, плавные 3D-анимации на скролле)', 'Полная визуальная упаковка соцсетей (Labs)'],
+      outcome: 'Личный сайт премиум-класса + контент. Один закрытый клиент на этот тариф = оплата аренды вашего хаба на месяц.',
       highlight: true, badge: 'Оптимальный',
     },
     {
-      tier: 'Тариф III', name: '«Голограмма»',
-      subtitle: 'Премиум B2C',
-      price: '120 000 ₽',
-      items: ['Полная упаковка (Тариф II)', 'Разработка персонального ИИ-бота (Systems)', 'Тренировка на постах и голосовых', '4 готовых Motion-ролика для Reels'],
-      outcome: 'Высшая лига личного бренда. Клиент получает цифровую копию себя, которая работает 24/7.'
+      tier: 'Тариф III', name: '«Автономный Соло»',
+      subtitle: 'Full Stack',
+      price: '90 000 ₽',
+      items: ['WebGL-сайт', 'Пакет контента', 'Интеграция n8n (автоматический сбор лидов с сайта в Telegram/Notion)', 'Парсинг конкурентов и авто-ответы'],
+      outcome: 'Микро-версия B2B-инфраструктуры. Два таких чека — это твой MacBook.'
     },
   ]
 
@@ -238,8 +207,8 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
         <GridBg />
 
         <div aria-hidden style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-          <div style={{ position: 'absolute', top: '20%', left: '15%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(120,200,250,0.04) 0%, transparent 70%)', filter: 'blur(60px)' }} />
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-60%)', width: '800px', height: '500px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.02) 0%, transparent 70%)', filter: 'blur(40px)' }} />
+          <div style={{ position: 'absolute', top: '20%', left: '15%', width: '500px', height: '500px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%)', filter: 'blur(60px)' }} />
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-60%)', width: '800px', height: '500px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.015) 0%, transparent 70%)', filter: 'blur(40px)' }} />
         </div>
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '920px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -248,15 +217,15 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
             initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ duration: 1.5, ease: EASE }}
             style={{ marginBottom: '40px', position: 'relative' }}
           >
-            <div style={{ position: 'absolute', inset: '-20px', background: 'radial-gradient(circle, rgba(120,200,250,0.15) 0%, transparent 70%)', filter: 'blur(30px)', zIndex: -1 }} />
-            <img src="/cyberpunk_avatar.png" alt="Cyberpunk 3D Avatar" style={{ width: '180px', height: '180px', objectFit: 'cover', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 0 60px rgba(120,200,250,0.1)' }} />
+            <div style={{ position: 'absolute', inset: '-30px', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)', filter: 'blur(30px)', zIndex: -1 }} />
+            <img src="/dark_monolith.png" alt="Dark Monolith" style={{ width: '220px', height: '220px', objectFit: 'contain', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }} />
           </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.15 }}
             style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.16)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
             <span style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.15)', display: 'inline-block' }} />
-            B2C ARCHITECTURE
+            SOLO-ENTERPRISE
             <span style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.15)', display: 'inline-block' }} />
           </motion.p>
 
@@ -268,14 +237,14 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
               background: 'linear-gradient(160deg, #ffffff 0%, rgba(255,255,255,0.4) 100%)',
               WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent',
             }}>
-              Синтетическая упаковка<br />личного бренда
+              Личная цифровая<br />инфраструктура.
             </h1>
           </motion.div>
 
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
-            style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(161,161,170,0.65)', lineHeight: 1.8, maxWidth: '640px', margin: '0 auto 56px' }}>
-            Твой контент выглядит как у всех. Мы переводим твой цифровой аватар в эстетику тяжелого люкса. Замени дешевые фотосессии на автономный ИИ-продакшен.
+            style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(161,161,170,0.65)', lineHeight: 1.8, maxWidth: '680px', margin: '0 auto 56px' }}>
+            Ты работаешь один, но твой цифровой след должен выглядеть как у корпорации. Мы не делаем дизайн. Мы разворачиваем автономную архитектуру для соло-фаундеров, крипто-проектов и медийных экспертов, заменяя собой целую команду продакшена.
           </motion.p>
         </div>
 
@@ -291,18 +260,19 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
 
       <Sep />
 
-      {/* ══ ЮНИТЫ ═════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '110px 24px', maxWidth: '1100px', margin: '0 auto' }}>
-        <FadeUp>
-          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <Tag>Что мы делаем</Tag>
-            <Headline>Инфраструктура<br />для одного</Headline>
-          </div>
+      {/* ══ ДЕКОНСТРУКЦИЯ ПРОБЛЕМЫ ════════════════════════════════════════ */}
+      <section style={{ padding: '130px 24px', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+        <FadeUp><Tag>Боль B2C</Tag></FadeUp>
+
+        <FadeUp delay={0.1}>
+          <Headline>Монолитная система<br />вместо хаоса подрядчиков</Headline>
         </FadeUp>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
-          {units.map((u, i) => <UnitCard key={u.name} {...u} delay={i * 0.1} />)}
-        </div>
+        <FadeUp delay={0.2}>
+          <p style={{ fontSize: '18px', color: 'rgba(161,161,170,0.7)', lineHeight: 1.8, marginTop: '32px' }}>
+            Нанимать видеографа, дизайнера и верстальщика — это долго, дорого и нестабильно. Использовать шаблонные Taplink — значит сливаться с тысячами новичков. Мы даем тебе монолитную систему: твой личный WebGL-интерфейс, бесперебойный ИИ-продакшен контента и автоматизацию входящего трафика.
+          </p>
+        </FadeUp>
       </section>
 
       <Sep />
@@ -311,8 +281,8 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
       <section style={{ padding: '110px 24px', maxWidth: '1240px', margin: '0 auto' }}>
         <FadeUp>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <Tag>Прайс-лист "Первой крови"</Tag>
-            <Headline>Цены бьют точно<br />в твои финансовые цели</Headline>
+            <Tag>Матрица тарифов «Solo-Enterprise»</Tag>
+            <Headline>Быстрые транзакции<br />для твоего кэшфлоу</Headline>
           </div>
         </FadeUp>
 
@@ -327,10 +297,16 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
       <section style={{ padding: '130px 24px 160px', maxWidth: '860px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
         <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: '700px', height: '500px', borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(255,255,255,0.015) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none' }} />
 
-        <FadeUp><Tag>закрытие</Tag></FadeUp>
+        <FadeUp><Tag>Точка входа</Tag></FadeUp>
 
         <FadeUp delay={0.1}>
-          <Headline size="lg">Начни трансформацию<br />своего бренда сегодня</Headline>
+          <Headline size="lg">Архитектура разворачивается<br />за 7 дней</Headline>
+        </FadeUp>
+
+        <FadeUp delay={0.2}>
+          <p style={{ fontSize: '15px', color: 'rgba(161,161,170,0.6)', lineHeight: 1.85, margin: '28px auto 44px', maxWidth: '560px' }}>
+            Мы берем только 4 личных проекта в месяц, чтобы гарантировать кинематографическое качество юнита Codes.
+          </p>
         </FadeUp>
 
         {/* Button */}
@@ -356,9 +332,8 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
                   border: 'none', cursor: 'pointer', letterSpacing: '-0.01em',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 20px 60px rgba(255,255,255,0.07)',
                   transition: 'box-shadow 300ms',
-                  marginTop: '44px',
                 }}>
-                Оставить заявку
+                Запустить инфраструктуру
                 <span style={{ fontSize: '20px', lineHeight: 1 }}>→</span>
               </motion.button>
             ) : (
@@ -370,9 +345,8 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
                   border: '1px solid rgba(120,240,150,0.2)', background: 'rgba(120,240,150,0.04)',
                   fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 500,
                   color: 'rgba(120,240,150,0.8)',
-                  marginTop: '44px',
                 }}>
-                <span>✓</span> Заявка принята. Свяжемся с тобой.
+                <span>✓</span> Запрос отправлен.
               </motion.div>
             )}
           </AnimatePresence>
@@ -383,7 +357,7 @@ export default function ProposalB2CPage() {  const [sent, setSent] = useState(fa
       <footer style={{ borderTop: '1px solid rgba(255,255,255,0.05)', padding: '28px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '13px', letterSpacing: '0.12em', color: 'rgba(255,255,255,0.28)', textTransform: 'uppercase' }}>TRIUMPH</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.12)' }}>
-          © {new Date().getFullYear()} Triumph Group · B2C
+          © {new Date().getFullYear()} Triumph Group · B2C Infrastructure
         </span>
         <a href="https://triumphgroup.cc" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.18)', textDecoration: 'none' }}>triumphgroup.cc</a>
       </footer>
