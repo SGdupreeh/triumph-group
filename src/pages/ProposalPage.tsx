@@ -198,19 +198,7 @@ function UnitCard({ icon, tag, name, replaces, desc, delay }: { icon: string; ta
   )
 }
 
-/* ─────────────────────────────────────────────────────────────────────
-   STAT BLOCK
-───────────────────────────────────────────────────────────────────── */
-function Stat({ value, label }: { value: string; label: string }) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true })
-  return (
-    <motion.div ref={ref} initial={{ opacity: 0, y: 16 }} animate={inView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.8, ease: EASE }} style={{ textAlign: 'center' }}>
-      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(30px, 4.5vw, 52px)', letterSpacing: '-0.03em', color: 'rgba(255,255,255,0.88)', lineHeight: 1 }}>{value}</div>
-      <p style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.14em', marginTop: '8px', maxWidth: '140px', margin: '8px auto 0' }}>{label}</p>
-    </motion.div>
-  )
-}
+
 
 /* ═══════════════════════════════════════════════════════════════════════
    MAIN
@@ -336,15 +324,17 @@ export default function ProposalPage() {
           {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.7 }}
-            style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '44px' }}>
+            style={{ display: 'flex', gap: '48px', justifyContent: 'center', flexWrap: 'wrap', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '44px' }}>
             {[
-              { value: '−67%', label: 'среднее снижение стоимости лида' },
-              { value: '<3 сек', label: 'скорость ответа AI-агента' },
-              { value: '2 компании', label: 'лимит в квартале' },
-              { value: '6 недель', label: 'полный запуск архитектуры' },
-            ].map((s, i) => (
-              <div key={i} style={{ flex: '1 1 140px', maxWidth: '200px' }}>
-                <Stat {...s} />
+              { val: '−67', suf: '%', label: 'среднее снижение стоимости лида' },
+              { val: '<3', suf: ' сек', label: 'скорость ответа AI-агента' },
+              { val: '2', suf: '', label: 'клиентов в квартал — наш лимит' },
+            ].map(({ val, suf, label }, i) => (
+              <div key={i} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 'clamp(28px, 4vw, 44px)', letterSpacing: '-0.025em', color: 'rgba(255,255,255,0.85)' }}>
+                  {val}{suf}
+                </div>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.2)', textTransform: 'uppercase', letterSpacing: '0.12em', marginTop: '8px', maxWidth: '140px' }}>{label}</p>
               </div>
             ))}
           </motion.div>
@@ -468,7 +458,7 @@ export default function ProposalPage() {
         <FadeUp><Tag>закрытие</Tag></FadeUp>
 
         <FadeUp delay={0.1}>
-          <Headline size="xl">В текущем квартале<br />мы берём только 2 компании</Headline>
+          <Headline size="lg">В текущем квартале<br />мы берём только 2 компании</Headline>
         </FadeUp>
 
         <FadeUp delay={0.2}>
