@@ -1,7 +1,9 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useScroll, useSpring, AnimatePresence } from 'framer-motion'
 
-const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
+// Emil Kowalski style spring configurations
+const SPRING = { type: 'spring', bounce: 0, duration: 0.8 } as const
+const FAST_SPRING = { type: 'spring', bounce: 0, duration: 0.5 } as const
 
 /* ─────────────────────────────────────────────────────────────────────
    ATOMS
@@ -14,7 +16,7 @@ function FadeUp({ children, delay = 0 }: { children: React.ReactNode; delay?: nu
     <motion.div ref={ref}
       initial={{ opacity: 0, y: 28 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1.1, ease: EASE, delay }}>
+      transition={{ ...SPRING, delay }}>
       {children}
     </motion.div>
   )
@@ -77,27 +79,31 @@ function PricingCard({ tier, name, subtitle, price, items, outcome, highlight, b
   const inView = useInView(ref, { once: true, margin: '-5%' })
   const [hov, setHov] = useState(false)
 
+  // Calculate dynamic styles for smooth Emil-style spring animations
+  const border = highlight ? '1px solid rgba(255,255,255,0.16)' : '1px solid rgba(255,255,255,0.06)'
+  const background = highlight ? 'rgba(255,255,255,0.035)' : 'rgba(255,255,255,0.012)'
+  const boxShadow = hov
+    ? highlight
+      ? '0 0 80px rgba(255,255,255,0.06), 0 0 0 1px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
+      : '0 0 40px rgba(255,255,255,0.025)'
+    : highlight
+      ? 'inset 0 1px 0 rgba(255,255,255,0.06)'
+      : 'none'
+
   return (
     <motion.div ref={ref}
-      initial={{ opacity: 0, y: 36 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1, ease: EASE, delay }}
+      initial={{ opacity: 0, y: 36, scale: 0.96 }}
+      animate={inView ? { opacity: 1, y: 0, scale: hov ? 1.01 : 1, boxShadow } : { opacity: 0, y: 36, scale: 0.96 }}
+      transition={{ ...FAST_SPRING, delay }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
         position: 'relative', flex: 1, minWidth: 0,
         borderRadius: '20px',
-        border: highlight ? '1px solid rgba(255,255,255,0.16)' : '1px solid rgba(255,255,255,0.06)',
-        background: highlight ? 'rgba(255,255,255,0.035)' : 'rgba(255,255,255,0.012)',
+        border, background,
         padding: '36px 28px', display: 'flex', flexDirection: 'column', gap: '22px',
-        transition: 'box-shadow 400ms, border-color 400ms',
-        boxShadow: hov
-          ? highlight
-            ? '0 0 80px rgba(255,255,255,0.06), 0 0 0 1px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-            : '0 0 40px rgba(255,255,255,0.025)'
-          : highlight
-            ? 'inset 0 1px 0 rgba(255,255,255,0.06)'
-            : 'none',
+        cursor: 'default',
+        transformOrigin: 'center bottom',
       }}>
 
       {badge && (
@@ -184,13 +190,14 @@ export default function ProposalB2CPage() {
     <div style={{ background: '#080809', color: '#e4e4e7', fontFamily: 'var(--font-body)', minHeight: '100vh', overflowX: 'hidden' }}>
 
       {/* Cursor glow */}
-      <div aria-hidden style={{
-        position: 'fixed', width: '600px', height: '600px', borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(255,255,255,0.018) 0%, transparent 70%)',
-        pointerEvents: 'none', zIndex: 0,
-        transform: `translate(${mousePos.x - 300}px, ${mousePos.y - 300}px)`,
-        transition: 'transform 0.15s ease',
-      }} />
+      <motion.div aria-hidden
+        animate={{ x: mousePos.x - 300, y: mousePos.y - 300 }}
+        transition={{ type: 'spring', bounce: 0, duration: 0.3 }}
+        style={{
+          position: 'fixed', width: '600px', height: '600px', borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(255,255,255,0.018) 0%, transparent 70%)',
+          pointerEvents: 'none', zIndex: 0,
+        }} />
 
       {/* Progress bar */}
       <motion.div style={{ position: 'fixed', top: 0, left: 0, right: 0, height: '2px', background: 'rgba(255,255,255,0.3)', transformOrigin: '0%', scaleX, zIndex: 9999 }} />
@@ -213,16 +220,8 @@ export default function ProposalB2CPage() {
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '920px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ duration: 1.5, ease: EASE }}
-            style={{ marginBottom: '40px', position: 'relative' }}
-          >
-            <div style={{ position: 'absolute', inset: '-30px', background: 'radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)', filter: 'blur(30px)', zIndex: -1 }} />
-            <img src="/dark_monolith.png" alt="Dark Monolith" style={{ width: '220px', height: '220px', objectFit: 'contain', filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.5))' }} />
-          </motion.div>
-
           <motion.p
-            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, ease: EASE, delay: 0.15 }}
+            initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING, delay: 0.15 }}
             style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', letterSpacing: '0.3em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.16)', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
             <span style={{ width: '24px', height: '1px', background: 'rgba(255,255,255,0.15)', display: 'inline-block' }} />
             SOLO-ENTERPRISE
@@ -230,7 +229,7 @@ export default function ProposalB2CPage() {
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.3, ease: EASE, delay: 0.3 }}>
+            initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING, delay: 0.3 }}>
             <h1 style={{
               fontFamily: 'var(--font-display)', fontWeight: 700,
               fontSize: 'clamp(36px, 7vw, 90px)', letterSpacing: '-0.035em', lineHeight: 1.02, marginBottom: '32px',
@@ -242,7 +241,7 @@ export default function ProposalB2CPage() {
           </motion.div>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.1, ease: EASE, delay: 0.5 }}
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ ...SPRING, delay: 0.5 }}
             style={{ fontSize: 'clamp(15px, 2vw, 18px)', color: 'rgba(161,161,170,0.65)', lineHeight: 1.8, maxWidth: '680px', margin: '0 auto 56px' }}>
             Ты работаешь один, но твой цифровой след должен выглядеть как у корпорации. Мы не делаем дизайн. Мы разворачиваем автономную архитектуру для соло-фаундеров, крипто-проектов и медийных экспертов, заменяя собой целую команду продакшена.
           </motion.p>
@@ -324,6 +323,7 @@ export default function ProposalB2CPage() {
                 }}
                 whileHover={{ scale: 1.025, boxShadow: '0 0 0 1px rgba(255,255,255,0.2), 0 28px 80px rgba(255,255,255,0.1)' }}
                 whileTap={{ scale: 0.975 }}
+                transition={FAST_SPRING}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '14px',
                   padding: '18px 40px', borderRadius: '14px',
@@ -331,7 +331,6 @@ export default function ProposalB2CPage() {
                   fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '15px',
                   border: 'none', cursor: 'pointer', letterSpacing: '-0.01em',
                   boxShadow: '0 0 0 1px rgba(255,255,255,0.1), 0 20px 60px rgba(255,255,255,0.07)',
-                  transition: 'box-shadow 300ms',
                 }}>
                 Запустить инфраструктуру
                 <span style={{ fontSize: '20px', lineHeight: 1 }}>→</span>
@@ -339,6 +338,7 @@ export default function ProposalB2CPage() {
             ) : (
               <motion.div key="ok"
                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                transition={FAST_SPRING}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: '12px',
                   padding: '18px 40px', borderRadius: '14px',
