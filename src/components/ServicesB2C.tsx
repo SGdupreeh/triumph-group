@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Rocket, Aperture, Fingerprint, LayoutTemplate, MessageSquareText, Image as ImageIcon } from 'lucide-react'
+import { Rocket, Aperture, Fingerprint, LayoutTemplate, Image as ImageIcon } from 'lucide-react'
 
 const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
 
