@@ -52,6 +52,9 @@ export default function Manifesto({ lang }: { lang: Lang }) {
         }
       })
 
+      // Set initial state for desktop
+      gsap.set(".statement-item, .manifesto-closing", { opacity: 0, y: 20 })
+
       // 1. Title "Dark Matter" Fall (OPTIMIZED)
       tl.fromTo(titleRef.current, 
         { 
@@ -157,7 +160,7 @@ export default function Manifesto({ lang }: { lang: Lang }) {
             fontSize: 'clamp(36px, 6.5vw, 84px)',
             backgroundImage: 'linear-gradient(to right, #ffffff 20%, rgba(255,255,255,0.2) 50%, #ffffff 80%)',
             backgroundSize: '200% 100%',
-            backgroundPositionX: '0%',
+            backgroundPositionX: '100%',
             willChange: 'transform, opacity'
           }}
         >
@@ -169,7 +172,7 @@ export default function Manifesto({ lang }: { lang: Lang }) {
           {t.statements.map((s, i) => (
             <div
               key={i}
-              className="statement-item flex items-center gap-5 py-4 border-b border-white/[0.05] opacity-0"
+              className="statement-item flex items-center gap-5 py-4 border-b border-white/[0.05]"
             >
               <span
                 aria-hidden
@@ -185,7 +188,7 @@ export default function Manifesto({ lang }: { lang: Lang }) {
         </div>
 
         {/* Closing statement */}
-        <p className="manifesto-closing font-mono text-[11px] tracking-[0.2em] uppercase text-white/30 opacity-0">
+        <p className="manifesto-closing font-mono text-[11px] tracking-[0.2em] uppercase text-white/30">
           {t.closing}
         </p>
       </div>

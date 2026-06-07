@@ -132,8 +132,8 @@ export default function Engine({ lang }: { lang: Lang }) {
               whileInView="visible"
               viewport={{ once: true, margin: '-8%' }}
               transition={{ delay: i * 0.08 }}
-              className="relative lg:pl-8 lg:sticky engine-card-wrapper"
-              style={{ top: `calc(25vh + ${i * 30}px)` }}
+              className="relative lg:pl-8 lg:sticky lg:top-[var(--card-top)] engine-card-wrapper"
+              style={{ '--card-top': `calc(25vh + ${i * 30}px)` } as React.CSSProperties}
             >
               {/* Timeline dot */}
               <div
