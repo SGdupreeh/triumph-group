@@ -233,76 +233,6 @@ function GridBg() {
 }
 
 /* ─────────────────────────────────────────────────────────────────────
-   PRICING CARD
-───────────────────────────────────────────────────────────────────── */
-interface PricingCardProps {
-  tier: string; name: string; tagline: string
-  price: string; priceNote: string; items: string[]
-  highlight?: boolean; badge?: string; delay?: number
-}
-
-function PricingCard({ tier, name, tagline, price, priceNote, items, highlight, badge, delay = 0 }: PricingCardProps) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-5%' })
-  const [hov, setHov] = useState(false)
-
-  return (
-    <motion.div ref={ref}
-      initial={{ opacity: 0, y: 36 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 1, ease: EASE, delay }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        position: 'relative', flex: 1, minWidth: 0,
-        borderRadius: '20px',
-        border: highlight ? '1px solid rgba(255,255,255,0.16)' : '1px solid rgba(255,255,255,0.06)',
-        background: highlight ? 'rgba(255,255,255,0.035)' : 'rgba(255,255,255,0.012)',
-        padding: '36px 28px', display: 'flex', flexDirection: 'column', gap: '22px',
-        transition: 'box-shadow 400ms, border-color 400ms',
-        boxShadow: hov
-          ? highlight
-            ? '0 0 80px rgba(255,255,255,0.06), 0 0 0 1px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)'
-            : '0 0 40px rgba(255,255,255,0.025)'
-          : highlight
-            ? 'inset 0 1px 0 rgba(255,255,255,0.06)'
-            : 'none',
-      }}>
-
-      {badge && (
-        <div style={{
-          position: 'absolute', top: '-1px', left: '50%', transform: 'translateX(-50%)',
-          background: 'rgba(255,255,255,0.93)', color: '#080809',
-          fontFamily: 'var(--font-mono)', fontSize: '9px', fontWeight: 700,
-          letterSpacing: '0.18em', padding: '4px 16px',
-          borderRadius: '0 0 10px 10px', textTransform: 'uppercase', whiteSpace: 'nowrap',
-        }}>{badge}</div>
-      )}
-
-      <div>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: '10px' }}>{tier}</p>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '20px', color: highlight ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.65)', letterSpacing: '-0.01em', marginBottom: '8px' }}>{name}</h3>
-        <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.3)', lineHeight: 1.6 }}>{tagline}</p>
-      </div>
-
-      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '18px' }}>
-        <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(22px, 2.5vw, 30px)', fontWeight: 700, color: highlight ? 'rgba(255,255,255,0.92)' : 'rgba(255,255,255,0.55)', letterSpacing: '-0.02em' }}>{price}</div>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.18)', marginTop: '4px', lineHeight: 1.5 }}>{priceNote}</p>
-      </div>
-
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '9px', flexGrow: 1 }}>
-        {items.map((item, i) => (
-          <li key={i} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
-            <span style={{ color: highlight ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.18)', marginTop: '2px', flexShrink: 0, fontSize: '12px', lineHeight: 1 }}>—</span>
-            <span style={{ fontSize: '12.5px', color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{item}</span>
-          </li>
-        ))}
-      </ul>
-    </motion.div>
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────────────
    TIMELINE
 ───────────────────────────────────────────────────────────────────── */
 function TimelineStep({ week, title, tasks, index, last }: { week: string; title: string; tasks: string[]; index: number; last: boolean }) {
@@ -336,33 +266,6 @@ function TimelineStep({ week, title, tasks, index, last }: { week: string; title
         </ul>
       </div>
     </motion.div>
-  )
-}
-
-/* ─────────────────────────────────────────────────────────────────────
-   UNIT CARD
-───────────────────────────────────────────────────────────────────── */
-function UnitCard({ icon, tag, name, replaces, desc, delay, replacesLabel }: { icon: string; tag: string; name: string; replaces: string; desc: string; delay: number; replacesLabel: string }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <FadeUp delay={delay}>
-      <div onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{
-        borderRadius: '16px', padding: '28px',
-        border: hov ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(255,255,255,0.055)',
-        background: hov ? 'rgba(255,255,255,0.025)' : 'rgba(255,255,255,0.012)',
-        transition: 'all 350ms', cursor: 'default',
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '18px' }}>
-          <span style={{ fontSize: '26px', lineHeight: 1 }}>{icon}</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.18)', letterSpacing: '0.15em', textTransform: 'uppercase' }}>{tag}</span>
-        </div>
-        <h3 style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '17px', color: 'rgba(255,255,255,0.88)', marginBottom: '6px', letterSpacing: '-0.01em' }}>{name}</h3>
-        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', color: 'rgba(255,255,255,0.18)', marginBottom: '14px', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-          {replacesLabel} {replaces}
-        </p>
-        <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.42)', lineHeight: 1.75 }}>{desc}</p>
-      </div>
-    </FadeUp>
   )
 }
 
@@ -550,24 +453,8 @@ export default function ProposalPage() {
 
       <Sep />
 
-      {/* ══ АРХИТЕКТУРНЫЕ РЕШЕНИЯ B2B ════════════════════════════════════ */}
+      {/* ══ АРХИТЕКТУРНЫЕ РЕШЕНИЯ B2B (Replacing Units & Pricing) ═════════ */}
       <InfrastructureB2B />
-
-      <Sep />
-
-      {/* ══ ЮНИТЫ ═════════════════════════════════════════════════════════ */}
-      <section style={{ padding: '110px 24px', maxWidth: '1100px', margin: '0 auto' }}>
-        <FadeUp>
-          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <Tag>{t.unitsTag}</Tag>
-            <Headline>{t.unitsTitle1}<br />{t.unitsTitle2}</Headline>
-          </div>
-        </FadeUp>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '14px' }}>
-          {t.units.map((u, i) => <UnitCard key={u.name} {...u} delay={i * 0.1} replacesLabel={t.unitReplaces} />)}
-        </div>
-      </section>
 
       <Sep />
 
@@ -589,22 +476,7 @@ export default function ProposalPage() {
         </div>
       </section>
 
-      <Sep />
-
-      {/* ══ ЦЕНООБРАЗОВАНИЕ ═══════════════════════════════════════════════ */}
-      <section style={{ padding: '110px 24px', maxWidth: '1240px', margin: '0 auto' }}>
-        <FadeUp>
-          <div style={{ textAlign: 'center', marginBottom: '64px' }}>
-            <Tag>{t.priceTag}</Tag>
-            <Headline>{t.priceTitle1}<br />{t.priceTitle2}</Headline>
-            <p style={{ fontSize: '14px', color: 'rgba(161,161,170,0.45)', maxWidth: '400px', margin: '16px auto 0', lineHeight: 1.7 }}>{t.priceDesc}</p>
-          </div>
-        </FadeUp>
-
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'stretch', flexWrap: 'wrap' }}>
-          {t.pricing.map((p, i) => <PricingCard key={p.tier} {...p} delay={i * 0.1} />)}
-        </div>
-      </section>
+      {/* ══ СЕКЦИЯ ПРАЙСИНГА УДАЛЕНА ТАК КАК ОНА ТЕПЕРЬ В INFRASTRUCTURE ══ */}
 
       <Sep />
 
