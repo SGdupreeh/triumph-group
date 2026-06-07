@@ -10,7 +10,7 @@ import Founder from './components/Founder'
 import AntiFAQ from './components/AntiFAQ'
 import Contact from './components/Contact'
 import { useLenis } from './hooks/useLenis'
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { motion, useScroll, useSpring } from 'framer-motion'
 
 type Lang = 'en' | 'ru'
 
@@ -33,18 +33,13 @@ export default function App() {
 
   // Scroll progress
   // Scroll progress for global bar
-  const { scrollYProgress, scrollY } = useScroll()
+  const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   })
 
-  // Hero parallax effects
-  // Assuming viewport height ~ 800px for the transition range
-  const heroScale = useTransform(scrollY, [0, 800], [1, 0.92])
-  const heroOpacity = useTransform(scrollY, [0, 800], [1, 0.2])
-  const heroY = useTransform(scrollY, [0, 800], [0, 100])
 
   return (
     <div className="min-h-screen bg-[#0c0c0d] text-white selection:bg-white/10 relative">

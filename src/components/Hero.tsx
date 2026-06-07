@@ -229,7 +229,7 @@ export default function Hero({ lang }: { lang: Lang }) {
         ctx.stroke()
       })
 
-      type DrawNode = { x: number; y: number; z: number; scale: number; type: 'center' | 'sat'; htmlRef?: React.RefObject<HTMLAnchorElement>; focusIdx?: number }
+      type DrawNode = { x: number; y: number; z: number; scale: number; type: 'center' | 'sat'; htmlRef?: React.RefObject<HTMLAnchorElement | null>; focusIdx?: number }
       const drawNodes: DrawNode[] = []
 
       // Center node

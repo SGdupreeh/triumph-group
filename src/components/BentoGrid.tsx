@@ -1,5 +1,4 @@
 import { useRef, useEffect } from 'react'
-import { motion, useInView } from 'framer-motion'
 import { Code2, Sparkles, Network, Crown } from 'lucide-react'
 import { BorderBeam } from './BorderBeam'
 import gsap from 'gsap'

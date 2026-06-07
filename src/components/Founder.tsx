@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -38,7 +38,6 @@ export default function Founder({ lang }: { lang: Lang }) {
     if (!sectionRef.current) return;
 
     let isSpeaking = false
-    let visualizerContext: gsap.Context
 
     const playVisualizer = () => {
       if (!isSpeaking) return;
