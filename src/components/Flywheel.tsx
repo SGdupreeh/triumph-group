@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import { Code2, Sparkles, Network } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -62,7 +62,7 @@ export default function Flywheel({ lang }: { lang: Lang }) {
   const t = copy[lang]
   const sectionRef = useRef<HTMLElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (window.innerWidth < 1024) return;
     if (!sectionRef.current) return;
 

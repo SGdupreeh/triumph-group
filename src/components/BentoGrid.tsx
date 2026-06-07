@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import { Code2, Sparkles, Network, Crown } from 'lucide-react'
 import { BorderBeam } from './BorderBeam'
 import gsap from 'gsap'
@@ -94,7 +94,7 @@ export default function BentoGrid({ lang }: { lang: Lang }) {
   const sectionRef = useRef<HTMLElement>(null)
 
   // Extreme GSAP Animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     // Disable heavy pin on mobile for better UX
     if (window.innerWidth < 1024) return;
     if (!sectionRef.current) return;

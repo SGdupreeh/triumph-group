@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import gsap from 'gsap'
@@ -43,7 +43,7 @@ export default function Hero({ lang }: { lang: Lang }) {
   const linkSystems = useRef<HTMLAnchorElement>(null)
 
   /* ── Core System Canvas & Scroll Interactive Logic ── */
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (window.innerWidth < 1024) return;
     
     const canvas = canvasRef.current

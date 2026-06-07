@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -26,7 +26,7 @@ export default function Contact({ lang }: { lang: Lang }) {
   const sectionRef = useRef<HTMLElement>(null)
   const bgRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {

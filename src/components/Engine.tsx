@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import type { Variants } from 'framer-motion'
 import gsap from 'gsap'
@@ -46,7 +46,7 @@ export default function Engine({ lang }: { lang: Lang }) {
   const inView = useInView(sectionRef, { once: true, margin: '-5%' })
 
   // GSAP 3D Stack Effect
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!sectionRef.current) return;
     
     // Disable on mobile if we want

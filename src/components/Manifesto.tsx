@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -34,7 +34,7 @@ export default function Manifesto({ lang }: { lang: Lang }) {
   const sectionRef = useRef<HTMLElement>(null)
   const titleRef = useRef<HTMLHeadingElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!sectionRef.current || !titleRef.current) return;
     
     // Ensure viewport is large enough for pinning

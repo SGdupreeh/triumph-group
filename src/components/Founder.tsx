@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useLayoutEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -34,7 +34,7 @@ export default function Founder({ lang }: { lang: Lang }) {
   const ring3Ref = useRef<HTMLDivElement>(null)
   const coreRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!sectionRef.current) return;
 
     let isSpeaking = false
