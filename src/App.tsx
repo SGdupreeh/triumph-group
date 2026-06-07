@@ -10,7 +10,7 @@ import Founder from './components/Founder'
 import AntiFAQ from './components/AntiFAQ'
 import Contact from './components/Contact'
 import { useLenis } from './hooks/useLenis'
-import { motion, useScroll, useSpring } from 'framer-motion'
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion'
 
 type Lang = 'en' | 'ru'
 
@@ -32,12 +32,19 @@ export default function App() {
   const year = new Date().getFullYear()
 
   // Scroll progress
-  const { scrollYProgress } = useScroll()
+  // Scroll progress for global bar
+  const { scrollYProgress, scrollY } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   })
+
+  // Hero parallax effects
+  // Assuming viewport height ~ 800px for the transition range
+  const heroScale = useTransform(scrollY, [0, 800], [1, 0.92])
+  const heroOpacity = useTransform(scrollY, [0, 800], [1, 0.2])
+  const heroY = useTransform(scrollY, [0, 800], [0, 100])
 
   return (
     <div className="min-h-screen bg-[#0c0c0d] text-white selection:bg-white/10 relative">
@@ -59,9 +66,12 @@ export default function App() {
 
       <Nav lang={lang} onLangChange={setLang} />
 
-      <main>
-        <Hero      lang={lang} />
-        <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.05) 70%, transparent 95%)' }} />
+      <main className="relative z-10 bg-[#0c0c0d]">
+        <Hero lang={lang} />
+        
+        {/* Subsequent content */}
+        <div className="relative z-20 bg-[#0c0c0d]">
+          <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.05) 70%, transparent 95%)' }} />
         <Manifesto lang={lang} />
         <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.05) 70%, transparent 95%)' }} />
         <Flywheel  lang={lang} />
@@ -77,6 +87,7 @@ export default function App() {
         <AntiFAQ   lang={lang} />
         <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0.05) 70%, transparent 95%)' }} />
         <Contact   lang={lang} />
+        </div>
       </main>
 
       <footer className="border-t border-white/[0.05] px-6 lg:px-12 py-8 max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] text-white/20 font-mono">

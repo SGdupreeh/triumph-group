@@ -1,11 +1,11 @@
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import type { Variants } from 'framer-motion'
+import { useRef, useEffect } from 'react'
 import { Code2, Sparkles, Network } from 'lucide-react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type Lang = 'en' | 'ru'
-
-const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
 
 const copy = {
   en: {
@@ -32,79 +32,97 @@ const copy = {
   },
 }
 
-const stagger: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15, delayChildren: 0.2 } },
-}
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
-}
-
-/** Animated connector rendered BETWEEN cards in the flex row — never behind them */
 function Connector({ label, delay = 0 }: { label: string; delay?: number }) {
   return (
-    <div className="hidden lg:flex flex-col items-center justify-center flex-shrink-0 w-16 gap-2 relative">
-      {/* Label */}
-      <span className="font-mono text-[9px] text-white/20 tracking-widest uppercase whitespace-nowrap">
+    <div className="hidden lg:flex flex-col items-center justify-center flex-shrink-0 w-24 xl:w-32 gap-2 relative">
+      <span className="connector-label opacity-0 font-mono text-[10px] text-white/40 tracking-widest uppercase whitespace-nowrap">
         {label}
       </span>
 
-      {/* Animated line — lives only in the gap, never behind a card */}
-      <div className="relative w-full h-px overflow-visible">
-        {/* Static track */}
-        <div className="absolute inset-0 bg-white/[0.06]" />
-        {/* Animated pulse */}
+      <div className="relative w-full h-px overflow-visible mt-2">
+        <div className="connector-line absolute left-0 top-0 h-full bg-white/[0.06]" style={{ width: "0%" }} />
+        
         <div
-          className="absolute top-0 h-px w-6 rounded-full"
+          className="connector-pulse absolute top-0 h-px w-6 rounded-full opacity-0"
           style={{
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent)',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent)',
             animation: `pulse-slide 1.8s linear ${delay}s infinite`,
           }}
         />
       </div>
 
-      {/* Arrow tip */}
-      <svg width="6" height="6" viewBox="0 0 6 6" fill="none" aria-hidden>
-        <path d="M0 3 L4 1 L4 5 Z" fill="rgba(255,255,255,0.2)" />
+      <svg width="6" height="6" viewBox="0 0 6 6" fill="none" aria-hidden className="connector-arrow mt-1 opacity-0">
+        <path d="M0 3 L4 1 L4 5 Z" fill="rgba(255,255,255,0.4)" />
       </svg>
-    </div>
-  )
-}
-
-/** Loop-back bar rendered BELOW the cards row */
-function LoopBack({ inView }: { inView: boolean }) {
-  return (
-    <div className="hidden lg:block relative h-8 mt-0 mx-8">
-      {/* Left vertical drop */}
-      <div className="absolute left-0 top-0 w-px h-full bg-white/[0.05]" />
-      {/* Right vertical drop */}
-      <div className="absolute right-0 top-0 w-px h-full bg-white/[0.05]" />
-      {/* Bottom horizontal return */}
-      <div className="absolute bottom-0 left-0 right-0 h-px overflow-hidden">
-        <div className="absolute inset-0 bg-white/[0.04]" />
-        <div
-          className="absolute top-0 h-px w-12 rounded-full"
-          style={{
-            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)',
-            animation: inView ? 'pulse-reverse 3s linear infinite' : 'none',
-          }}
-        />
-      </div>
     </div>
   )
 }
 
 export default function Flywheel({ lang }: { lang: Lang }) {
   const t = copy[lang]
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-10%' })
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useEffect(() => {
+    if (window.innerWidth < 1024) return;
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          pin: true,
+          scrub: 1.0,
+          start: "top top",
+          end: "+=400%", // 4 screens to fully assemble
+          invalidateOnRefresh: true,
+        }
+      })
+
+      // Set initial 3D isometric state
+      gsap.set(".engine-3d-scene", { rotateX: 45, rotateZ: -15, rotateY: 10 })
+      gsap.set(".flywheel-card", { z: 1500, opacity: 0 })
+      
+      // Stage 1: Cards fall into place from sky (z-axis)
+      tl.to(".flywheel-card", {
+        z: 0,
+        opacity: 0.6, // Dimmed until fully assembled
+        ease: "power3.inOut",
+        stagger: 0.4,
+        duration: 1.5,
+        force3D: true
+      })
+      
+      // Stage 2: Draw the laser connectors
+      tl.to(".connector-line", { width: "100%", duration: 0.6, ease: "power2.inOut", stagger: 0.3 }, "+=0.2")
+        .to(".connector-arrow", { opacity: 1, duration: 0.3, stagger: 0.3 }, "<")
+        .to(".connector-label", { opacity: 1, duration: 0.3, stagger: 0.3 }, "<")
+      
+      // Hold the 3D view for a brief moment
+      tl.to({}, { duration: 0.5 })
+
+      // Stage 3: Flatten out to 2D view for reading
+      tl.to(".engine-3d-scene", {
+        rotateX: 0,
+        rotateZ: 0,
+        rotateY: 0,
+        ease: "power3.inOut",
+        duration: 2.0
+      })
+      
+      // Cards reach full brightness when flattened
+      tl.to(".flywheel-card", { opacity: 1, duration: 1.0 }, "<")
+      
+      // Activates the flowing pulses
+      tl.to(".connector-pulse", { opacity: 1, duration: 0.5 }, "-=0.5")
+
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section className="relative py-20 lg:py-28 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+    <section ref={sectionRef} className="relative py-20 lg:py-0 lg:h-screen lg:flex lg:flex-col lg:justify-center overflow-hidden bg-[#0c0c0d]">
 
-      {/* Background spotlight — monochrome only */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] rounded-full blur-[120px]"
@@ -112,57 +130,39 @@ export default function Flywheel({ lang }: { lang: Lang }) {
         />
       </div>
 
-      {/* Header */}
-      <motion.div
-        className="text-center mb-16"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-10%' }}
-        transition={{ duration: 1.1, ease: EASE }}
-      >
+      <div className="text-center mb-16 lg:mb-24 flex-shrink-0 relative z-20">
         <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/20 mb-4">{t.eyebrow}</p>
         <h2 className="font-display font-bold tracking-tight text-gradient" style={{ fontSize: 'clamp(28px, 4.5vw, 50px)' }}>
           {t.title}
         </h2>
-      </motion.div>
+      </div>
 
-      {/* Node graph */}
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? 'visible' : 'hidden'}
-        className="max-w-4xl mx-auto"
-      >
-        {/* Desktop: flex row with connector elements IN THE GAPS */}
-        <div className="hidden lg:flex items-center">
+      <div className="mx-auto lg:w-full lg:overflow-visible perspective-container" style={{ perspective: "1500px" }}>
+        {/* Desktop: 3D Assembly Scene */}
+        <div className="hidden lg:flex items-center justify-center flex-nowrap px-6 gap-2 xl:gap-4 w-full engine-3d-scene" style={{ transformStyle: 'preserve-3d' }}>
           {t.nodes.map((node, i) => {
             const Icon = node.icon
             return (
-              <div key={node.name} className="contents">
-                {/* Connector BEFORE card (except first) */}
+              <div key={node.name} className="flex items-center" style={{ transformStyle: 'preserve-3d' }}>
                 {i > 0 && <Connector label={t.arrows[i - 1]} delay={i * 0.6} />}
 
-                <motion.div variants={fadeUp} className="flex-1 min-w-0">
-                  <div className="spotlight-card group relative flex flex-col items-center text-center p-8 rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300">
-                    <div className="w-16 h-16 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center mb-5 group-hover:border-white/20 transition-colors duration-300">
-                      <Icon size={24} className="text-white/40 group-hover:text-white/70 transition-colors duration-300" strokeWidth={1.25} />
+                <div className="w-[300px] xl:w-[350px] flex-shrink-0 flywheel-card" style={{ transformStyle: 'preserve-3d' }}>
+                  <div className="spotlight-card group relative flex flex-col items-center text-center p-8 xl:p-10 rounded-2xl bg-[#0c0c0d] backdrop-blur-2xl border border-white/[0.1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_15px_30px_rgba(0,0,0,0.4)] hover:bg-white/[0.03] hover:border-white/[0.15] transition-all duration-300">
+                    <div className="w-16 h-16 xl:w-20 xl:h-20 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center mb-5 xl:mb-6 group-hover:border-white/20 transition-colors duration-300 group-hover:scale-110">
+                      <Icon size={28} className="text-white/40 group-hover:text-white/80 transition-colors duration-300" strokeWidth={1.25} />
                     </div>
-                    <h3 className="font-display text-[18px] font-semibold text-white/90 mb-2">{node.name}</h3>
-                    <p className="text-zinc-500 text-[13px] leading-relaxed">{node.desc}</p>
-                    <span className="absolute top-3 right-4 font-mono text-[10px] text-white/10 tracking-widest">0{i + 1}</span>
+                    <h3 className="font-display text-[20px] xl:text-[22px] font-semibold text-white/90 mb-3">{node.name}</h3>
+                    <p className="text-zinc-500 text-[14px] xl:text-[15px] leading-relaxed px-2 xl:px-4">{node.desc}</p>
+                    <span className="absolute top-4 right-5 font-mono text-[11px] text-white/10 tracking-widest font-bold text-4xl opacity-20">0{i + 1}</span>
                   </div>
-                </motion.div>
+                </div>
               </div>
             )
           })}
         </div>
 
-        {/* Loop-back bar — BELOW the cards, never overlapping */}
-        <LoopBack inView={inView} />
-
-        {/* Mobile: vertical stack with labels between */}
-        <div className="flex flex-col gap-0 lg:hidden">
+        {/* Mobile: vertical stack */}
+        <div className="flex flex-col gap-0 lg:hidden px-6">
           {t.nodes.map((node, i) => {
             const Icon = node.icon
             return (
@@ -174,8 +174,8 @@ export default function Flywheel({ lang }: { lang: Lang }) {
                     <div className="flex-1 h-px bg-white/[0.06]" />
                   </div>
                 )}
-                <motion.div variants={fadeUp}>
-                  <div className="spotlight-card group relative flex flex-col items-center text-center p-8 rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300">
+                <div>
+                  <div className="spotlight-card group relative flex flex-col items-center text-center p-8 rounded-2xl bg-[#0c0c0d] border border-white/[0.1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)]">
                     <div className="w-16 h-16 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center mb-5">
                       <Icon size={24} className="text-white/40" strokeWidth={1.25} />
                     </div>
@@ -183,33 +183,21 @@ export default function Flywheel({ lang }: { lang: Lang }) {
                     <p className="text-zinc-500 text-[13px] leading-relaxed">{node.desc}</p>
                     <span className="absolute top-3 right-4 font-mono text-[10px] text-white/10 tracking-widest">0{i + 1}</span>
                   </div>
-                </motion.div>
+                </div>
               </div>
             )
           })}
         </div>
-      </motion.div>
+      </div>
 
-      {/* Sub text */}
-      <motion.p
-        className="text-center mt-10 text-zinc-600 text-[13px] tracking-[0.1em] uppercase font-mono"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1.2, ease: EASE, delay: 0.4 }}
-      >
+      <p className="text-center mt-16 text-zinc-600 text-[13px] tracking-[0.1em] uppercase font-mono lg:absolute lg:bottom-12 lg:left-0 lg:w-full relative z-20">
         {t.sub}
-      </motion.p>
+      </p>
 
-      {/* CSS keyframes */}
       <style>{`
         @keyframes pulse-slide {
           0%   { left: -24px; }
           100% { left: calc(100% + 24px); }
-        }
-        @keyframes pulse-reverse {
-          0%   { right: -48px; left: auto; }
-          100% { right: calc(100% + 48px); left: auto; }
         }
       `}</style>
     </section>

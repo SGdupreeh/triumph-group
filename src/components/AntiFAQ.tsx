@@ -67,10 +67,15 @@ const fadeUp: Variants = {
 export default function AntiFAQ({ lang }: { lang: Lang }) {
   const t = copy[lang]
   const [open, setOpen] = useState<number | null>(null)
+  const [hovered, setHovered] = useState<number | null>(null)
+  
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-10%' })
 
   const toggle = (i: number) => setOpen(open === i ? null : i)
+
+  // Determine if ANY item is actively focused
+  const hasFocus = open !== null || hovered !== null
 
   return (
     <section className="py-20 lg:py-28 px-6 lg:px-12 max-w-3xl mx-auto">
@@ -94,28 +99,51 @@ export default function AntiFAQ({ lang }: { lang: Lang }) {
         initial="hidden"
         animate={inView ? 'visible' : 'hidden'}
         className="flex flex-col gap-2"
+        onMouseLeave={() => setHovered(null)}
       >
         {t.items.map((item, i) => {
           const isOpen = open === i
+          const isHovered = hovered === i
+          const isFocused = isOpen || isHovered
+          const shouldDim = hasFocus && !isFocused
+
           return (
-            <motion.div key={i} variants={fadeUp}>
+            <motion.div 
+              key={i} 
+              variants={fadeUp}
+              onMouseEnter={() => setHovered(i)}
+              animate={{ 
+                opacity: shouldDim ? 0.3 : 1, 
+                scale: shouldDim ? 0.98 : 1,
+                filter: shouldDim ? 'blur(1px)' : 'blur(0px)'
+              }}
+              transition={{ duration: 0.4, ease: EASE }}
+            >
               <button
                 onClick={() => toggle(i)}
                 className={[
                   'w-full flex items-center justify-between gap-4 px-6 py-5 rounded-xl text-left',
-                  'border transition-all duration-300',
+                  'border transition-all duration-300 relative overflow-hidden',
                   isOpen
-                    ? 'border-white/[0.12] bg-white/[0.04] shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)]'
-                    : 'border-white/[0.08] bg-white/[0.02] shadow-[inset_0_1px_1px_rgba(255,255,255,0.03)] hover:border-white/[0.1] hover:bg-white/[0.04]',
+                    ? 'border-white/[0.12] bg-[#111112] shadow-[0_10px_30px_-15px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.08)]'
+                    : 'border-white/[0.05] bg-[#0c0c0d] shadow-[inset_0_1px_1px_rgba(255,255,255,0.02)]',
                 ].join(' ')}
               >
-                <span className="font-display text-[15px] font-medium text-white/80">{item.q}</span>
+                {/* Drawer top highlight when open */}
+                {isOpen && (
+                  <motion.div 
+                    layoutId="faq-highlight"
+                    className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" 
+                  />
+                )}
+
+                <span className="font-display text-[15px] font-medium text-white/90">{item.q}</span>
                 <motion.span
                   animate={{ rotate: isOpen ? 180 : 0 }}
-                  transition={{ type: 'spring' as const, bounce: 0.2, duration: 0.45 }}
+                  transition={{ type: 'spring' as const, stiffness: 200, damping: 12 }}
                   className="flex-shrink-0"
                 >
-                  <ChevronDown size={16} className="text-white/30" />
+                  <ChevronDown size={16} className={isOpen ? "text-white/80" : "text-white/30"} />
                 </motion.span>
               </button>
 
@@ -125,11 +153,18 @@ export default function AntiFAQ({ lang }: { lang: Lang }) {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ type: 'spring' as const, bounce: 0.15, duration: 0.5 }}
+                    transition={{ type: 'spring' as const, bounce: 0, duration: 0.5 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-6 pt-2 pb-5">
-                      <p className="text-zinc-500 text-[14px] leading-relaxed">{item.a}</p>
+                    <div className="px-6 pt-2 pb-6">
+                      <motion.p 
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, duration: 0.4, ease: EASE }}
+                        className="text-zinc-400 text-[14px] leading-relaxed"
+                      >
+                        {item.a}
+                      </motion.p>
                     </div>
                   </motion.div>
                 )}

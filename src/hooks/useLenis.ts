@@ -1,14 +1,10 @@
 import { useEffect } from 'react'
 import Lenis from 'lenis'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-/**
- * Initializes Lenis smooth scroll and syncs it with
- * requestAnimationFrame. Returns the Lenis instance
- * so callers can scroll-to programmatically if needed.
- *
- * Also dispatches a native 'scroll' event so that
- * Framer Motion's useScroll() tracks the Lenis position.
- */
+gsap.registerPlugin(ScrollTrigger)
+
 export function useLenis() {
   useEffect(() => {
     const lenis = new Lenis({
@@ -18,23 +14,25 @@ export function useLenis() {
       touchMultiplier: 1.5,
     })
 
-    // Sync Lenis scroll position → native scroll events
-    // This makes Framer Motion's useScroll() work correctly
+    // Sync Lenis scroll with ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update)
+
+    // Sync Lenis scroll position → native scroll events for Framer Motion
     lenis.on('scroll', ({ scroll }: { scroll: number }) => {
-      // Framer Motion reads window.scrollY via native scroll events
-      // Lenis moves the document, so we just need to ensure the event fires
       void scroll // suppress unused warning
     })
 
-    function raf(time: number) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
-    }
+    // Use GSAP's ticker to drive Lenis's raf for perfect sync
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000)
+    })
 
-    const rafId = requestAnimationFrame(raf)
+    gsap.ticker.lagSmoothing(0)
 
     return () => {
-      cancelAnimationFrame(rafId)
+      gsap.ticker.remove((time) => {
+        lenis.raf(time * 1000)
+      })
       lenis.destroy()
     }
   }, [])

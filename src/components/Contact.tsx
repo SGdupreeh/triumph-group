@@ -1,9 +1,10 @@
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { useRef, useEffect } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type Lang = 'en' | 'ru'
-
-const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
 
 const copy = {
   en: {
@@ -22,87 +23,141 @@ const copy = {
 
 export default function Contact({ lang }: { lang: Lang }) {
   const t = copy[lang]
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-10%' })
+  const sectionRef = useRef<HTMLElement>(null)
+  const bgRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      // 1. Endless Pulsating Void (Event Horizon)
+      gsap.to(bgRef.current, {
+        scale: 1.1,
+        opacity: 0.8,
+        duration: 4,
+        yoyo: true,
+        repeat: -1,
+        ease: "sine.inOut"
+      })
+
+      // Initial state
+      gsap.set(".contact-eyebrow, .contact-sub, .contact-email-wrapper", { opacity: 0, y: 20 })
+      gsap.set(".contact-title", { 
+        opacity: 0, 
+        letterSpacing: "0.5em", // Huge initial spacing
+        filter: "blur(10px)",
+        scale: 1.1
+      })
+
+      // 2. The Collapse (Singularity)
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: "top 75%",
+        once: true,
+        onEnter: () => {
+          const tl = gsap.timeline()
+
+          // Eyebrow first
+          tl.to(".contact-eyebrow", {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power2.out"
+          })
+
+          // The aggressive snap of the title
+          tl.to(".contact-title", {
+            opacity: 1,
+            letterSpacing: "normal", // Back to tight spacing
+            filter: "blur(0px)",
+            scale: 1,
+            duration: 1.5,
+            ease: "expo.out" // Heavy, aggressive ease
+          }, "-=0.5")
+
+          // Subtitle and Email
+          tl.to([".contact-sub", ".contact-email-wrapper"], {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            stagger: 0.2,
+            ease: "power2.out"
+          }, "-=1.0")
+        }
+      })
+
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [lang])
 
   return (
     <section
+      ref={sectionRef}
       id="contact"
-      className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6"
+      className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden"
     >
-      {/* Deep vignette radial */}
+      {/* Deep vignette radial / The Void */}
       <div
+        ref={bgRef}
         aria-hidden
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 origin-center"
         style={{
-          background:
-            'radial-gradient(ellipse 70% 50% at 50% 60%, rgba(255,255,255,0.025) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,255,255,0.035) 0%, transparent 70%)',
         }}
       />
 
-      <div ref={ref} className="relative z-10 max-w-4xl w-full">
+      <div className="relative z-10 max-w-4xl w-full">
 
         {/* Eyebrow */}
-        <motion.p
-          className="font-mono text-[11px] tracking-[0.22em] uppercase text-white/20 mb-10"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 1.2, ease: EASE }}
-        >
+        <p className="contact-eyebrow font-mono text-[11px] tracking-[0.22em] uppercase text-white/20 mb-10">
           {t.eyebrow}
-        </motion.p>
+        </p>
 
-        {/* Giant title — opacity + subtle y (no overflow clip = no RU clipping bug) */}
-        <motion.h2
-          className="font-display font-bold leading-[1.04] tracking-tight whitespace-pre-line mb-4"
+        {/* Giant title — Event Horizon collapse */}
+        <h2
+          className="contact-title font-display font-bold leading-[1.04] whitespace-pre-line mb-4 origin-center"
           style={{ fontSize: 'clamp(52px, 9vw, 120px)' }}
-          initial={{ opacity: 0, y: 28 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.2, ease: EASE, delay: 0.1 }}
         >
-          <span className="text-gradient">{t.title}</span>
-        </motion.h2>
+          <span className="text-gradient inline-block pr-[0.1em]">{t.title}</span>
+        </h2>
 
         {/* Sub */}
-        <motion.p
-          className="text-zinc-500 text-[15px] mb-20"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 1, ease: EASE, delay: 0.3 }}
-        >
+        <p className="contact-sub text-zinc-500 text-[15px] mb-20">
           {t.sub}
-        </motion.p>
+        </p>
 
         {/* Giant glowing email */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 1.1, ease: EASE, delay: 0.45 }}
-          className="flex flex-col items-center gap-6"
-        >
+        <div className="contact-email-wrapper flex flex-col items-center gap-6">
           <a
             href={`mailto:${t.email}`}
             id="contact-email-link"
-            className="group relative font-display font-bold text-white/70 hover:text-white transition-all duration-500"
+            className="group relative font-display font-bold text-white/70 hover:text-white transition-all duration-300"
             style={{ fontSize: 'clamp(20px, 4vw, 52px)' }}
           >
-            {/* Glow behind text on hover */}
+            {/* Extremely aggressive glow behind text on hover */}
             <span
               aria-hidden
-              className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none blur-2xl"
-              style={{ background: 'rgba(255,255,255,0.08)' }}
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none blur-[40px] scale-150"
+              style={{ background: 'rgba(255,255,255,0.15)' }}
             />
             <span className="relative" style={{
               filter: 'drop-shadow(0 0 0px rgba(255,255,255,0))',
-              transition: 'filter 600ms ease',
+              transition: 'filter 300ms ease, color 300ms ease',
             }}
-            onMouseEnter={e => (e.currentTarget.style.filter = 'drop-shadow(0 0 28px rgba(255,255,255,0.25))')}
-            onMouseLeave={e => (e.currentTarget.style.filter = 'drop-shadow(0 0 0px rgba(255,255,255,0))')}
+            onMouseEnter={e => {
+              e.currentTarget.style.filter = 'drop-shadow(0 0 40px rgba(255,255,255,0.8)) drop-shadow(0 0 15px rgba(255,255,255,0.5))'
+              e.currentTarget.style.color = '#fff'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.filter = 'drop-shadow(0 0 0px rgba(255,255,255,0))'
+              e.currentTarget.style.color = 'rgba(255,255,255,0.7)'
+            }}
             >
               {t.email}
             </span>
           </a>
-        </motion.div>
+        </div>
 
       </div>
 

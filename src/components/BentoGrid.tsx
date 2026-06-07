@@ -1,12 +1,13 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
-import type { Variants } from 'framer-motion'
 import { Code2, Sparkles, Network, Crown } from 'lucide-react'
 import { BorderBeam } from './BorderBeam'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type Lang = 'en' | 'ru'
-
-const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
 
 const copy = {
   en: {
@@ -89,59 +90,81 @@ const copy = {
   },
 }
 
-const stagger: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.05 } },
-}
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.97 },
-  visible: {
-    opacity: 1, y: 0, scale: 1,
-    transition: { duration: 1, ease: EASE },
-  },
-}
-
 export default function BentoGrid({ lang }: { lang: Lang }) {
   const t = copy[lang]
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-8%' })
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // Extreme GSAP Animations
+  useEffect(() => {
+    // Disable heavy pin on mobile for better UX
+    if (window.innerWidth < 1024) return;
+    if (!sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          pin: true,
+          scrub: 1, // Smooth scrub
+          start: "center center",
+          end: "+=120%", // Keep scrolling locked for 1.2 viewport heights
+        }
+      });
+
+      // 1. Text Reveal (Word by word)
+      tl.from(".reveal-word", {
+        y: "130%",
+        rotateZ: 8,
+        opacity: 0,
+        stagger: 0.1,
+        ease: "power3.out",
+        duration: 1
+      }, 0); // Start at beginning of timeline
+
+      // 2. Extreme Scale Zoom for Cards
+      tl.from(".bento-card", {
+        scale: 0.4,
+        opacity: 0,
+        y: 150,
+        stagger: 0.2, // Pop out one by one
+        ease: "back.out(2)", // Bouncy overshoot
+        duration: 1.5,
+        transformOrigin: "center center"
+      }, 0.2); // Start slightly after text reveal
+      
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section id="units" className="relative py-20 lg:py-28 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+    <section id="units" ref={sectionRef} className="relative py-20 lg:py-0 lg:min-h-screen lg:flex lg:flex-col lg:justify-center px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
 
       {/* Background spotlight — neutral only */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] rounded-full blur-[120px]" style={{ background: 'rgba(255,255,255,0.015)' }} />
       </div>
 
-      <motion.div
-        className="text-center mb-12"
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-10%' }}
-        transition={{ duration: 1.1, ease: EASE }}
-      >
+      <div className="text-center mb-12">
         <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/20 mb-4">{t.eyebrow}</p>
-        <h2 className="font-display font-bold tracking-tight text-gradient" style={{ fontSize: 'clamp(28px, 4.5vw, 50px)' }}>
-          {t.title}
+        
+        {/* Text Reveal Structure */}
+        <h2 className="font-display font-bold tracking-tight text-gradient flex flex-wrap justify-center gap-x-[0.3em] gap-y-2" style={{ fontSize: 'clamp(28px, 4.5vw, 50px)' }}>
+          {t.title.split(' ').map((word, i) => (
+            <span key={i} className="overflow-hidden inline-flex pb-2">
+              <span className="reveal-word inline-block origin-bottom-left">{word}</span>
+            </span>
+          ))}
         </h2>
-      </motion.div>
+      </div>
 
-      <motion.div
-        ref={ref}
-        variants={stagger}
-        initial="hidden"
-        animate={inView ? 'visible' : 'hidden'}
-        className="grid grid-cols-1 md:grid-cols-3 gap-3"
-      >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         {t.units.map((unit) => {
           const Icon = unit.icon
           return (
-            <motion.article
+            <article
               key={unit.tag}
-              variants={fadeUp}
-              className="spotlight-card group h-full relative flex flex-col p-7 rounded-2xl bg-white/[0.015] backdrop-blur-2xl border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] hover:bg-white/[0.025] hover:border-white/[0.09] transition-all duration-300"
+              className="bento-card spotlight-card group h-full relative flex flex-col p-7 rounded-2xl bg-white/[0.015] backdrop-blur-2xl border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] hover:bg-white/[0.025] hover:border-white/[0.09] transition-colors duration-300"
             >
               {/* Top-right corner glow — sharp, not bloomy */}
               <div
@@ -174,15 +197,12 @@ export default function BentoGrid({ lang }: { lang: Lang }) {
                   <span className="relative z-10">{unit.cta}</span>
                 </a>
               </div>
-            </motion.article>
+            </article>
           )
         })}
 
         {/* CEO card — full width */}
-        <motion.article
-          variants={fadeUp}
-          className="spotlight-card md:col-span-3 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-6 md:gap-10 p-7 md:p-8 rounded-2xl bg-white/[0.015] backdrop-blur-2xl border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] hover:bg-white/[0.025] hover:border-white/[0.09] transition-all duration-300"
-        >
+        <article className="bento-card spotlight-card md:col-span-3 grid grid-cols-1 md:grid-cols-[auto_1fr_auto] items-center gap-6 md:gap-10 p-7 md:p-8 rounded-2xl bg-white/[0.015] backdrop-blur-2xl border border-white/[0.06] shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] hover:bg-white/[0.025] hover:border-white/[0.09] transition-colors duration-300">
           <div className="flex-shrink-0">
             <div className="w-[72px] h-[72px] rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center">
               <Crown size={24} className="text-white/35" strokeWidth={1.25} />
@@ -206,8 +226,8 @@ export default function BentoGrid({ lang }: { lang: Lang }) {
               {t.ceoEmail}
             </a>
           </div>
-        </motion.article>
-      </motion.div>
+        </article>
+      </div>
     </section>
   )
 }

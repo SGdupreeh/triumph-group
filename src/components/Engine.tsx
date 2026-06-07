@@ -1,6 +1,10 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import type { Variants } from 'framer-motion'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type Lang = 'en' | 'ru'
 
@@ -38,18 +42,51 @@ const fadeUp: Variants = {
 
 export default function Engine({ lang }: { lang: Lang }) {
   const t = copy[lang]
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-5%' })
+  const sectionRef = useRef<HTMLElement>(null)
+  const inView = useInView(sectionRef, { once: true, margin: '-5%' })
+
+  // GSAP 3D Stack Effect
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    
+    // Disable on mobile if we want
+    if (window.innerWidth < 1024) return;
+
+    const ctx = gsap.context(() => {
+      const wrappers = gsap.utils.toArray('.engine-card-wrapper') as HTMLElement[];
+      const cards = gsap.utils.toArray('.engine-card') as HTMLElement[];
+      
+      wrappers.forEach((wrapper, i) => {
+        if (i === wrappers.length - 1) return; // Last card doesn't shrink
+        
+        gsap.to(cards[i], {
+          scale: 0.92 - (wrappers.length - 1 - i) * 0.02,
+          opacity: 0.3,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: wrapper,
+            start: () => `top ${window.innerHeight * 0.25 + i * 30}`,
+            end: () => `bottom ${window.innerHeight * 0.25 + i * 30}`,
+            scrub: true,
+            invalidateOnRefresh: true,
+          }
+        })
+      })
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <section className="relative py-20 lg:py-28 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
+    <section ref={sectionRef} className="relative py-20 lg:py-28 px-6 lg:px-12 max-w-7xl mx-auto overflow-clip">
 
-      {/* Background spotlight — monochrome only */}
+      {/* Background spotlight */}
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute top-1/2 right-1/4 w-[600px] h-[400px] rounded-full blur-[120px]" style={{ background: 'rgba(255,255,255,0.02)' }} />
         <div className="absolute bottom-1/3 left-1/3 w-[400px] h-[300px] rounded-full blur-[100px]" style={{ background: 'rgba(255,255,255,0.015)' }} />
       </div>
-      <div ref={ref} className="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20">
+
+      <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-20 relative z-10">
 
         {/* Left — sticky header */}
         <div className="lg:sticky lg:top-[40vh] lg:self-start">
@@ -95,7 +132,8 @@ export default function Engine({ lang }: { lang: Lang }) {
               whileInView="visible"
               viewport={{ once: true, margin: '-8%' }}
               transition={{ delay: i * 0.08 }}
-              className="relative lg:pl-8"
+              className="relative lg:pl-8 lg:sticky engine-card-wrapper"
+              style={{ top: `calc(25vh + ${i * 30}px)` }}
             >
               {/* Timeline dot */}
               <div
@@ -103,7 +141,7 @@ export default function Engine({ lang }: { lang: Lang }) {
                 style={{ background: 'rgba(255,255,255,0.3)', boxShadow: '0 0 6px rgba(255,255,255,0.2)' }}
               />
               <div
-                className={`spotlight-card group relative p-8 rounded-2xl bg-white/[0.03] backdrop-blur-2xl border border-white/[0.1] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12)] hover:bg-white/[0.05] hover:border-white/[0.15] transition-all duration-300 overflow-hidden ${i < t.steps.length - 1 ? 'mb-3' : ''}`}
+                className={`engine-card spotlight-card group relative p-8 rounded-2xl bg-[#0c0c0d] backdrop-blur-2xl border border-white/[0.1] shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.12)] hover:bg-white/[0.03] hover:border-white/[0.15] transition-colors duration-300 overflow-hidden ${i < t.steps.length - 1 ? 'mb-32' : 'mb-32'}`}
               >
                 {/* Watermark number */}
                 <span
