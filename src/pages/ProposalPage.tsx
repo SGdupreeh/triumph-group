@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useScroll, useSpring, AnimatePresence } from 'framer-motion'
+import InfrastructureB2B from '../components/InfrastructureB2B'
 
 const EASE = [0.23, 1, 0.32, 1] as [number, number, number, number]
 
@@ -546,6 +547,11 @@ export default function ProposalPage() {
           </FadeUp>
         </div>
       </section>
+
+      <Sep />
+
+      {/* ══ АРХИТЕКТУРНЫЕ РЕШЕНИЯ B2B ════════════════════════════════════ */}
+      <InfrastructureB2B />
 
       <Sep />
 

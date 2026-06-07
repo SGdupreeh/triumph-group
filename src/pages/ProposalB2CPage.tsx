@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useScroll, useSpring, AnimatePresence } from 'framer-motion'
+import ServicesB2C from '../components/ServicesB2C'
 
 const SPRING = { type: 'spring' as const, bounce: 0, duration: 0.8 }
 const FAST_SPRING = { type: 'spring' as const, bounce: 0, duration: 0.5 }
@@ -535,7 +536,10 @@ export default function ProposalB2CPage() {
 
       <Sep />
 
-      {/* ══ ЮНИТЫ ═════════════════════════════════════════════════════════ */}
+      {/* ══ УСЛУГИ B2C ════════════════════════════════════════════════════ */}
+      <ServicesB2C />
+
+      <Sep />
       <section style={{ padding: '110px 24px', maxWidth: '1100px', margin: '0 auto' }}>
         <FadeUp>
           <div style={{ textAlign: 'center', marginBottom: '64px' }}>
