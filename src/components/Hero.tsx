@@ -153,17 +153,17 @@ export default function Hero({ lang }: { lang: Lang }) {
 
       // Calculate raw 3D positions assuming (0,0) is center
       const rawProject = (x: number, y: number, z: number, tiltX = 0, tiltZ = 0) => {
-        let y0 = y * Math.cos(tiltX) - z * Math.sin(tiltX)
-        let z0 = y * Math.sin(tiltX) + z * Math.cos(tiltX)
+        const y0 = y * Math.cos(tiltX) - z * Math.sin(tiltX)
+        const z0 = y * Math.sin(tiltX) + z * Math.cos(tiltX)
         
-        let x0 = x * Math.cos(tiltZ) - y0 * Math.sin(tiltZ)
-        let y0_1 = x * Math.sin(tiltZ) + y0 * Math.cos(tiltZ)
+        const x0 = x * Math.cos(tiltZ) - y0 * Math.sin(tiltZ)
+        const y0_1 = x * Math.sin(tiltZ) + y0 * Math.cos(tiltZ)
 
-        let y1 = y0_1 * Math.cos(finalRx) - z0 * Math.sin(finalRx)
-        let z1 = y0_1 * Math.sin(finalRx) + z0 * Math.cos(finalRx)
+        const y1 = y0_1 * Math.cos(finalRx) - z0 * Math.sin(finalRx)
+        const z1 = y0_1 * Math.sin(finalRx) + z0 * Math.cos(finalRx)
         
-        let x2 = x0 * Math.cos(finalRy) + z1 * Math.sin(finalRy)
-        let z2 = -x0 * Math.sin(finalRy) + z1 * Math.cos(finalRy)
+        const x2 = x0 * Math.cos(finalRy) + z1 * Math.sin(finalRy)
+        const z2 = -x0 * Math.sin(finalRy) + z1 * Math.cos(finalRy)
         
         const perspectiveScale = fov / (fov + z2)
         const finalScale = perspectiveScale * animState.zoom
