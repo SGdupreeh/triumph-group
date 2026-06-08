@@ -95,8 +95,8 @@ export default function Manifesto({ lang }: { lang: Lang }) {
       )
 
       // 3. Spotlight Focus Sequence
-      const statements = gsap.utils.toArray(".statement-item")
-      statements.forEach((item: HTMLElement, i) => {
+      const statements = gsap.utils.toArray(".statement-item") as HTMLElement[]
+      statements.forEach((item, i) => {
         const num = item.querySelector('.statement-num')
         const text = item.querySelector('.statement-text')
         
